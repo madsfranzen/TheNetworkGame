@@ -8,12 +8,20 @@ import javafx.scene.paint.Color;
 public class GameRenderer extends ScrollPane {
 
     private StackPane canvasContainer;
-    private Canvas groundCanvas;
     private final int WORLD_WIDTH = 32;
     private final int WORLD_HEIGHT = 32;
     private final int TILE_SIZE = 64;
     private Canvas gridCanvas = new Canvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE);
     private GraphicsContext gc = gridCanvas.getGraphicsContext2D();
+
+    private Canvas waterCanvas = new Canvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE);
+    private GraphicsContext gcWater = waterCanvas.getGraphicsContext2D();
+
+    private Canvas groundCanvas = new Canvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE);
+    private GraphicsContext gcGround = groundCanvas.getGraphicsContext2D();
+
+    private Canvas playerCanvas = new Canvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE);
+    private GraphicsContext gcPlayer = playerCanvas.getGraphicsContext2D();
 
     public GameRenderer(int width, int height) {
         super();
@@ -24,16 +32,21 @@ public class GameRenderer extends ScrollPane {
         // Setup canvas container
         canvasContainer = new StackPane();
 
-        groundCanvas = new Canvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE);
-
         drawGrid();
         drawGround();
+
+        drawPlayer();
 
         gridCanvas.setMouseTransparent(false);
         canvasContainer.getChildren().add(gridCanvas);
 
+        waterCanvas.setMouseTransparent(true);
         groundCanvas.setMouseTransparent(true);
+        playerCanvas.setMouseTransparent(true);
+
+        canvasContainer.getChildren().add(waterCanvas);
         canvasContainer.getChildren().add(groundCanvas);
+        canvasContainer.getChildren().add(playerCanvas);
 
         setupScrollPane(width, height);
 
@@ -85,22 +98,77 @@ public class GameRenderer extends ScrollPane {
         }
     }
 
+    // TODO: THIS IS TO BE DELETED IN PRODUCTION
     public void drawGround() {
         for (int x = 0; x < WORLD_WIDTH; x++) {
             for (int y = 0; y < WORLD_HEIGHT; y++) {
-                drawTile(x, y, "GRASS_SOLO");
+                if (Math.random() < 0.2) {
+                    drawTile(x, y, "WATER");
+                } else {
+                    drawTile(x, y, "GRASS_CENTER");
+                }
             }
         }
     }
 
+    public void drawPlayer() {
+        drawTile(12, 12, "PLAYER_IDLE1");
+    }
+
     public void drawTile(int x, int y, String sprite) {
+        String spriteName = sprite.toUpperCase().split("_")[0];
+
         Image spriteImage = SpriteLoader.getSprite(sprite);
 
         int[] sourceXY = TileVariant.getVariant(sprite);
-        System.out.println("SOURCE XY: " + sourceXY[0] + ", " + sourceXY[1]);
-        gc.drawImage(
+
+        GraphicsContext drawGC;
+
+        switch (spriteName) {
+            case "PLAYER":
+                drawGC = gcPlayer;
+                drawImage3x3(drawGC, spriteImage, sourceXY, x, y);
+                break;
+            case "GRASS":
+                drawGC = gcGround;
+                drawImage1x1(drawGC, spriteImage, sourceXY, x, y);
+                break;
+            case "WATER":
+                drawGC = gcWater;
+                drawImage1x1(drawGC, spriteImage, sourceXY, x, y);
+                break;
+            case "SAND":
+                drawGC = gcGround;
+                drawImage1x1(drawGC, spriteImage, sourceXY, x, y);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void drawImage1x1(GraphicsContext GC, Image spriteImage, int[] sourceXY, int x, int y) {
+        GC.drawImage(
                 spriteImage,
-                sourceXY[0] * TILE_SIZE, sourceXY[1] * TILE_SIZE, TILE_SIZE, TILE_SIZE,
-                x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                sourceXY[0] * TILE_SIZE,
+                sourceXY[1] * TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+                x * TILE_SIZE,
+                y * TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE);
+    }
+
+    public void drawImage3x3(GraphicsContext GC, Image spriteImage, int[] sourceXY, int x, int y) {
+        GC.drawImage(
+                spriteImage,
+                sourceXY[0] * TILE_SIZE,
+                sourceXY[1] * TILE_SIZE,
+                TILE_SIZE * 3,
+                TILE_SIZE * 3,
+                x * TILE_SIZE - TILE_SIZE,
+                y * TILE_SIZE - TILE_SIZE,
+                TILE_SIZE * 3,
+                TILE_SIZE * 3);
     }
 }
