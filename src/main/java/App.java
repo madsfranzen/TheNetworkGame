@@ -1,16 +1,7 @@
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.net.Socket;
 
 import javafx.application.Application;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Scene;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 public class App{
 
