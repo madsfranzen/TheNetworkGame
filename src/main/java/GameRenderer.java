@@ -7,21 +7,21 @@ import javafx.scene.paint.Color;
 
 public class GameRenderer extends ScrollPane {
 
-    private StackPane canvasContainer;
+    private final StackPane canvasContainer;
     private final int WORLD_WIDTH = 32;
     private final int WORLD_HEIGHT = 32;
     private final int TILE_SIZE = 64;
 
-    private Canvas gridCanvas = new Canvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE);
-    private GraphicsContext gc = gridCanvas.getGraphicsContext2D();
+    private final Canvas gridCanvas = new Canvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE);
+    private final GraphicsContext gc = gridCanvas.getGraphicsContext2D();
 
-    private Canvas waterCanvas = new Canvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE);
-    private GraphicsContext gcWater = waterCanvas.getGraphicsContext2D();
+    private final Canvas waterCanvas = new Canvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE);
+    private final GraphicsContext gcWater = waterCanvas.getGraphicsContext2D();
 
-    private Canvas groundCanvas = new Canvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE);
-    private GraphicsContext gcGround = groundCanvas.getGraphicsContext2D();
+    private final Canvas groundCanvas = new Canvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE);
+    private final GraphicsContext gcGround = groundCanvas.getGraphicsContext2D();
 
-    private PlayerCanvas playerCanvas = new PlayerCanvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE, WORLD_WIDTH,
+    private final PlayerCanvas playerCanvas = new PlayerCanvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE, WORLD_WIDTH,
             WORLD_HEIGHT, TILE_SIZE);
 
     public GameRenderer(int width, int height) {
@@ -112,31 +112,26 @@ public class GameRenderer extends ScrollPane {
 
     public void drawTile(int x, int y, String sprite) {
         String spriteName = sprite.toUpperCase().split("_")[0];
-
         Image spriteImage = SpriteLoader.getSprite(sprite);
-
         int[] sourceXY = TileVariant.getVariant(sprite);
 
-        GraphicsContext drawGC;
 
         switch (spriteName) {
-            case "GRASS":
-                drawGC = gcGround;
-                drawImage1x1(drawGC, spriteImage, sourceXY, x, y);
-                break;
-            case "WATER":
-                drawGC = gcWater;
-                drawImage1x1(drawGC, spriteImage, sourceXY, x, y);
-                break;
-            case "SAND":
-                drawGC = gcGround;
-                drawImage1x1(drawGC, spriteImage, sourceXY, x, y);
-                break;
-            default:
-                break;
+            case "GRASS" -> {
+                drawImage1x1(gcGround, spriteImage, sourceXY, x, y);
+            }
+            case "WATER" -> {
+                drawImage1x1(gcWater, spriteImage, sourceXY, x, y);
+            }
+            case "SAND" -> {
+                drawImage1x1(gcGround, spriteImage, sourceXY, x, y);
+            }
+            default -> {
+            }
         }
     }
 
+    // COPY PASTE THIS TO ANY INDIVIDUAL CANVASES THAT MIGHT NEED IT
     public void drawImage1x1(GraphicsContext GC, Image spriteImage, int[] sourceXY, int x, int y) {
         GC.drawImage(
                 spriteImage,
@@ -150,6 +145,7 @@ public class GameRenderer extends ScrollPane {
                 TILE_SIZE);
     }
 
+    // COPY PASTE THIS TO ANY INDIVIDUAL CANVASES THAT MIGHT NEED IT
     public void drawImage3x3(GraphicsContext GC, Image spriteImage, int[] sourceXY, int x, int y) {
         GC.drawImage(
                 spriteImage,

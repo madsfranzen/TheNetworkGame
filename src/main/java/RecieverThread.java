@@ -3,6 +3,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 public class RecieverThread extends Thread {
     private BufferedReader in;
 
@@ -17,10 +20,47 @@ public class RecieverThread extends Thread {
     public void run() {
         String messageFromServer;
         System.out.println("RecieverThread started");
+
         try {
+
+        String welcomeMessage = in.readLine();
+        System.out.println(welcomeMessage);
+
             while ((messageFromServer = in.readLine()) != null) {
-                // TODO : convert json recieved
-                System.out.println(messageFromServer);
+                // Parse JSON received
+                    JSONObject jsonObject = new JSONObject(messageFromServer);
+                    
+                    // Parse scoreBoard
+                   if (jsonObject.has("scoreBoard")) {
+                    JSONObject scoreBoard = jsonObject.getJSONObject("scoreBoard");
+                    Gui.scoreBoard.updateScoreBoard(scoreBoard);
+                    }
+                    
+                    // Parse gameState
+                    if (jsonObject.has("gameState")) {
+                        JSONObject gameState = jsonObject.getJSONObject("gameState");
+                        JSONArray updatePackages = gameState.getJSONArray("updatePackages");
+                        
+                        for (int i = 0; i < updatePackages.length(); i++) {
+                            JSONObject update = updatePackages.getJSONObject(i);
+                            JSONObject pair = update.getJSONObject("pair");
+                            int x = pair.getInt("x");
+                            int y = pair.getInt("y");
+                            
+                            JSONObject fieldState = update.getJSONObject("fieldState");
+                            String sprite = fieldState.getString("sprite");
+                            String contentType = fieldState.getString("contentType");
+                            int zIndex = fieldState.getInt("zIndex");
+                            
+                            // Optional player field
+                            String player = fieldState.has("player") ? fieldState.getString("player") : null;
+                            
+                            System.out.println("Update at (" + x + "," + y + "): " + 
+                                               "Sprite=" + sprite + ", Type=" + contentType + 
+                                               (player != null ? ", Player=" + player : ""));
+                        }
+                    }
+                // System.out.println(messageFromServer);
             }
         } catch (IOException e) {
             System.out.println("RecieverThread error: " + e.getMessage());
