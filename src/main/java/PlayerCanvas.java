@@ -13,7 +13,6 @@ public class PlayerCanvas extends Canvas {
     private final int WORLD_HEIGHT;
     private final int TILE_SIZE;
 
-    private final PlayerTile[][] playerTiles;
     private final Set<PlayerPosition> activePlayerPositions;
 
     private GraphicsContext gcPlayer = getGraphicsContext2D();
@@ -39,8 +38,6 @@ public class PlayerCanvas extends Canvas {
         this.activePlayerPositions = Collections.synchronizedSet(new HashSet<>());
         this.animator = createAnimator();
         this.animator.start();
-        playerTiles = new PlayerTile[WORLD_WIDTH][WORLD_HEIGHT];
-
     }
 
     private AnimationTimer createAnimator() {
@@ -63,7 +60,6 @@ public class PlayerCanvas extends Canvas {
         String sprite = "PLAYER_IDLE" + (currentFrame + 1);
         int[] sourceXY = TileVariant.getVariant(sprite);
 
-        // Use synchronized set to avoid concurrent modification
         synchronized (activePlayerPositions) {
             for (PlayerPosition pos : activePlayerPositions) {
                 drawPlayerTile(gcPlayer, SpriteLoader.getSprite(sprite + "_" + pos.faction()), sourceXY, pos.centerX(),
@@ -83,21 +79,16 @@ public class PlayerCanvas extends Canvas {
                 TILE_SIZE * 3);
     }
 
-    // TODO: Not for use in production, this is just for generating placeholder map
     public void drawPlayer(int x, int y, String faction) {
         System.out.println("Drawing player at (" + x + ", " + y + ")");
-        playerTiles[x][y] = new PlayerTile();
         activePlayerPositions.add(new PlayerPosition(x, y, faction));
     }
 
     public void removePlayer(int x, int y) {
         System.out.println("Removing player at (" + x + ", " + y + ")");
-        playerTiles[x][y] = null;
         activePlayerPositions.removeIf(pos -> pos.centerX() == x && pos.centerY() == y);
     }
 
-    public class PlayerTile {
-    }
 
     public record PlayerPosition(int centerX, int centerY, String faction) {
     }
