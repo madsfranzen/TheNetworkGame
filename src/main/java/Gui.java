@@ -66,15 +66,17 @@ public class Gui extends Application {
 
         toggleWindowedFullscreen(primaryStage);
 
-        primaryStage.show();
+        UpdateController.setGameRenderer(gameRenderer);
+        UpdateController.setPlayerCanvas(gameRenderer.getPlayerCanvas());
+        UpdateController.setScoreBoard(scoreBoard);
 
-        primaryStage.requestFocus();
 
         scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             switch (event.getCode()) {
                 case UP:
                     try {
                         outToServer.writeBytes(Action.MOVEUP + "\n");
+                        System.out.println("MOVEUP");
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -82,6 +84,7 @@ public class Gui extends Application {
                 case DOWN:
                     try {
                         outToServer.writeBytes(Action.MOVEDOWN + "\n");
+                        System.out.println("MOVEDOWN");
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -89,6 +92,7 @@ public class Gui extends Application {
                 case LEFT:
                     try {
                         outToServer.writeBytes(Action.MOVELEFT + "\n");
+                        System.out.println("MOVELEFT");
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -96,6 +100,7 @@ public class Gui extends Application {
                 case RIGHT:
                     try {
                         outToServer.writeBytes(Action.MOVERIGHT + "\n");
+                        System.out.println("MOVERIGHT");
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -106,6 +111,8 @@ public class Gui extends Application {
         });
 
         setDataOutputStream();
+        primaryStage.show();
+        primaryStage.requestFocus();
     }
 
     public static void setDataOutputStream() {
@@ -117,7 +124,7 @@ public class Gui extends Application {
         primaryStage.setY(screenBounds.getMinY());
         primaryStage.setWidth(screenBounds.getWidth());
         primaryStage.setHeight(screenBounds.getHeight());
+        primaryStage.setFullScreen(false);
         primaryStage.initStyle(StageStyle.UNDECORATED);
     }
-
 }

@@ -10,56 +10,74 @@ public class RecieverThread extends Thread {
     private BufferedReader in;
 
     public RecieverThread(Socket socket) {
-            try {
-                this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void run() {
         String messageFromServer;
-        System.out.println("RecieverThread started");
+        System.out.println("RecieverThread started (LOADING)");
+
+        while (UpdateController.playerCanvas == null || UpdateController.scoreBoard == null
+                || UpdateController.gameRenderer == null) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        System.out.println("RecieverThread started (READY)");
 
         try {
 
-        String welcomeMessage = in.readLine();
-        System.out.println(welcomeMessage);
+            String welcomeMessage = in.readLine();
+            System.out.println(welcomeMessage);
 
             while ((messageFromServer = in.readLine()) != null) {
                 // Parse JSON received
-                    JSONObject jsonObject = new JSONObject(messageFromServer);
-                    
-                    // Parse scoreBoard
-                   if (jsonObject.has("scoreBoard")) {
+                JSONObject jsonObject = new JSONObject(messageFromServer);
+
+                // Parse scoreBoard
+                if (jsonObject.has("scoreBoard")) {
                     JSONObject scoreBoard = jsonObject.getJSONObject("scoreBoard");
-                    Gui.scoreBoard.updateScoreBoard(scoreBoard);
-                    }
-                    
-                    // Parse gameState
-                    if (jsonObject.has("gameState")) {
-                        JSONObject gameState = jsonObject.getJSONObject("gameState");
-                        JSONArray updatePackages = gameState.getJSONArray("updatePackages");
-                        
-                        for (int i = 0; i < updatePackages.length(); i++) {
-                            JSONObject update = updatePackages.getJSONObject(i);
-                            JSONObject pair = update.getJSONObject("pair");
-                            int x = pair.getInt("x");
-                            int y = pair.getInt("y");
-                            
-                            JSONObject fieldState = update.getJSONObject("fieldState");
-                            String sprite = fieldState.getString("sprite");
-                            String contentType = fieldState.getString("contentType");
-                            int zIndex = fieldState.getInt("zIndex");
-                            
-                            // Optional player field
-                            String player = fieldState.has("player") ? fieldState.getString("player") : null;
-                            
-                            System.out.println("Update at (" + x + "," + y + "): " + 
-                                               "Sprite=" + sprite + ", Type=" + contentType + 
-                                               (player != null ? ", Player=" + player : ""));
+                    UpdateController.scoreBoard.updateScoreBoard(scoreBoard);
+                }
+
+                // Parse gameState
+                if (jsonObject.has("gameState")) {
+                    JSONObject gameState = jsonObject.getJSONObject("gameState");
+                    JSONArray updatePackages = gameState.getJSONArray("updatePackages");
+
+                    for (int i = 0; i < updatePackages.length(); i++) {
+                        JSONObject update = updatePackages.getJSONObject(i);
+                        JSONObject pair = update.getJSONObject("pair");
+                        int x = pair.getInt("x");
+                        int y = pair.getInt("y");
+
+                        JSONObject fieldState = update.getJSONObject("fieldState");
+                        String sprite = fieldState.getString("sprite");
+                        String contentType = fieldState.getString("contentType");
+                        int zIndex = fieldState.getInt("zIndex");
+
+                        // Optional player field
+                        String player = fieldState.has("player") ? fieldState.getString("player") : null;
+
+                        System.out.println("Update at (" + x + "," + y + "): " +
+                                "Sprite=" + sprite + ", Type=" + contentType +
+                                (player != null ? ", Player=" + player : ""));
+
+                        if (player != null) {
+                            UpdateController.playerCanvas.drawPlayer(x, y, "blue");
+                        } else {
+                            UpdateController.playerCanvas.removePlayer(x, y);
                         }
+
                     }
+                }
                 // System.out.println(messageFromServer);
             }
         } catch (IOException e) {

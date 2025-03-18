@@ -21,7 +21,8 @@ public class GameRenderer extends ScrollPane {
     private final Canvas groundCanvas = new Canvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE);
     private final GraphicsContext gcGround = groundCanvas.getGraphicsContext2D();
 
-    private final PlayerCanvas playerCanvas = new PlayerCanvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE, WORLD_WIDTH,
+    private final PlayerCanvas playerCanvas = new PlayerCanvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE,
+            WORLD_WIDTH,
             WORLD_HEIGHT, TILE_SIZE);
 
     public GameRenderer(int width, int height) {
@@ -35,8 +36,6 @@ public class GameRenderer extends ScrollPane {
 
         drawGrid();
         drawGround();
-
-        playerCanvas.drawPlayer();
 
         gridCanvas.setMouseTransparent(false);
         canvasContainer.getChildren().add(gridCanvas);
@@ -72,17 +71,66 @@ public class GameRenderer extends ScrollPane {
         setCache(true);
         setCacheHint(javafx.scene.CacheHint.SPEED);
 
-        // Optimize scrolling speed based on size
-        double scrollFactor = 0.001 * Math.min(width, height);
+        // Disable arrow key scrolling
+        setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case UP:
+                case DOWN:
+                case LEFT: 
+                case RIGHT:
+                    event.consume();
+                    break;
+                default:
+                    break;
+            }
+        });
+        
+        // Additional key event handler to ensure arrow keys are blocked
+        addEventFilter(javafx.scene.input.KeyEvent.ANY, event -> {
+            switch (event.getCode()) {
+                case UP:
+                case DOWN:
+                case LEFT:
+                case RIGHT:
+                    event.consume();
+                    break;
+                default:
+                    break;
+            }
+        });
 
-        // Handle scroll events with throttling
+        // Completely disable scroll events
         setOnScroll(event -> {
             event.consume();
-
-            // Use the ScrollPane's built-in scrolling mechanism
-            setHvalue(getHvalue() - event.getDeltaX() * scrollFactor);
-            setVvalue(getVvalue() - event.getDeltaY() * scrollFactor);
         });
+        
+        // Add scroll event filter to catch all scroll events at the capture phase
+        addEventFilter(javafx.scene.input.ScrollEvent.ANY, event -> {
+            event.consume();
+        });
+        
+        // Disable mouse drag scrolling
+        setPannable(false);
+        
+        // Lock scroll values
+        hvalueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal.doubleValue() != 0.5) {
+                setHvalue(0.5);
+            }
+        });
+        
+        vvalueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal.doubleValue() != 0.5) {
+                setVvalue(0.5);
+            }
+        });
+        
+        // Set initial scroll position
+        setHvalue(0.5);
+        setVvalue(0.5);
+        
+        // Disable focus traversal to prevent keyboard navigation
+        setFocusTraversable(false);
     }
 
     public void drawGrid() {
@@ -114,7 +162,6 @@ public class GameRenderer extends ScrollPane {
         String spriteName = sprite.toUpperCase().split("_")[0];
         Image spriteImage = SpriteLoader.getSprite(sprite);
         int[] sourceXY = TileVariant.getVariant(sprite);
-
 
         switch (spriteName) {
             case "GRASS" -> {
@@ -159,4 +206,7 @@ public class GameRenderer extends ScrollPane {
                 TILE_SIZE * 3);
     }
 
+    public PlayerCanvas getPlayerCanvas() {
+        return playerCanvas;
+    }
 }

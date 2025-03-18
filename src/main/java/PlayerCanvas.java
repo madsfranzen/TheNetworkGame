@@ -84,14 +84,16 @@ public class PlayerCanvas extends Canvas {
     }
 
     // TODO: Not for use in production, this is just for generating placeholder map
-    // for testing
-    public void drawPlayer() {
-        playerTiles[12][12] = new PlayerTile();
-        playerTiles[5][5] = new PlayerTile();
-        activePlayerPositions.add(new PlayerPosition(12, 12, "blue"));
-        activePlayerPositions.add(new PlayerPosition(5, 5, "red"));
-        activePlayerPositions.add(new PlayerPosition(8, 20, "yellow"));
-        activePlayerPositions.add(new PlayerPosition(15, 3, "purple"));
+    public void drawPlayer(int x, int y, String faction) {
+        System.out.println("Drawing player at (" + x + ", " + y + ")");
+        playerTiles[x][y] = new PlayerTile();
+        activePlayerPositions.add(new PlayerPosition(x, y, faction));
+    }
+
+    public void removePlayer(int x, int y) {
+        System.out.println("Removing player at (" + x + ", " + y + ")");
+        playerTiles[x][y] = null;
+        activePlayerPositions.removeIf(pos -> pos.centerX() == x && pos.centerY() == y);
     }
 
     public class PlayerTile {
