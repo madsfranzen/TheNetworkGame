@@ -1,6 +1,4 @@
 import javafx.scene.image.Image;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * SpriteLoader - Centralized class for loading and caching all game sprites and
@@ -17,7 +15,7 @@ public class SpriteLoader {
     private static final String ELEVATION_TILEMAP_PATH = "/assets/Terrain/Ground/Tilemap_Elevation.png";
     private static final String SHADOWS_PATH = "/assets/Terrain/Ground/Shadows.png";
     private static final String BRIDGE_PATH = "/assets/Terrain/Bridge/Bridge_All.png";
-
+    private static final String PLAYER_PATH = "/assets/Factions/Knights/Troops/Warrior/Blue/Warrior_Blue.png";
     private static Image WATER;
     private static Image FOAM;
     private static Image ROCKS1;
@@ -27,6 +25,7 @@ public class SpriteLoader {
     private static Image ELEVATION_TILEMAP;
     private static Image SHADOWS;
     private static Image BRIDGE;
+    private static Image PLAYER;
 
     public static void loadSprites() {
         // Images = loaded on startup
@@ -39,11 +38,14 @@ public class SpriteLoader {
         ELEVATION_TILEMAP = new Image(SpriteLoader.class.getResourceAsStream(ELEVATION_TILEMAP_PATH));
         SHADOWS = new Image(SpriteLoader.class.getResourceAsStream(SHADOWS_PATH));
         BRIDGE = new Image(SpriteLoader.class.getResourceAsStream(BRIDGE_PATH));
+        PLAYER = new Image(SpriteLoader.class.getResourceAsStream(PLAYER_PATH));
     }
 
     public static Image getSprite(String sprite) {
         String spriteName = sprite.toLowerCase().split("_")[0];
         switch (spriteName) {
+            case "player":
+                return PLAYER;
             case "water":
                 return WATER;
             case "foam":
@@ -65,6 +67,7 @@ public class SpriteLoader {
             case "bridge":
                 return BRIDGE;
             default:
+                System.out.println("SPRITE NOT FOUND: " + sprite);
                 return null;
         }
     }
