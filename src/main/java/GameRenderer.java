@@ -11,6 +11,8 @@ public class GameRenderer extends ScrollPane {
     private final int WORLD_WIDTH = 32;
     private final int WORLD_HEIGHT = 32;
     private final int TILE_SIZE = 64;
+
+
     private Canvas gridCanvas = new Canvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE);
     private GraphicsContext gc = gridCanvas.getGraphicsContext2D();
 
@@ -20,8 +22,7 @@ public class GameRenderer extends ScrollPane {
     private Canvas groundCanvas = new Canvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE);
     private GraphicsContext gcGround = groundCanvas.getGraphicsContext2D();
 
-    private Canvas playerCanvas = new Canvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE);
-    private GraphicsContext gcPlayer = playerCanvas.getGraphicsContext2D();
+    private PlayerCanvas playerCanvas = new PlayerCanvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE);
 
     public GameRenderer(int width, int height) {
         super();
@@ -29,13 +30,14 @@ public class GameRenderer extends ScrollPane {
         this.setMinSize(width, height);
         this.setPrefSize(width, height);
 
+
         // Setup canvas container
         canvasContainer = new StackPane();
 
         drawGrid();
         drawGround();
 
-        drawPlayer();
+        playerCanvas.drawPlayer();
 
         gridCanvas.setMouseTransparent(false);
         canvasContainer.getChildren().add(gridCanvas);
@@ -52,7 +54,9 @@ public class GameRenderer extends ScrollPane {
 
         // Add the canvas container to the scroll pane
         this.setContent(canvasContainer);
+
     }
+
 
     private void setupScrollPane(int width, int height) {
         setHbarPolicy(ScrollBarPolicy.NEVER);
@@ -83,6 +87,7 @@ public class GameRenderer extends ScrollPane {
         });
     }
 
+
     public void drawGrid() {
         gc.setStroke(Color.LIGHTGRAY);
         gc.setLineWidth(1);
@@ -111,9 +116,6 @@ public class GameRenderer extends ScrollPane {
         }
     }
 
-    public void drawPlayer() {
-        drawTile(12, 12, "PLAYER_IDLE1");
-    }
 
     public void drawTile(int x, int y, String sprite) {
         String spriteName = sprite.toUpperCase().split("_")[0];
@@ -125,10 +127,6 @@ public class GameRenderer extends ScrollPane {
         GraphicsContext drawGC;
 
         switch (spriteName) {
-            case "PLAYER":
-                drawGC = gcPlayer;
-                drawImage3x3(drawGC, spriteImage, sourceXY, x, y);
-                break;
             case "GRASS":
                 drawGC = gcGround;
                 drawImage1x1(drawGC, spriteImage, sourceXY, x, y);
@@ -171,4 +169,5 @@ public class GameRenderer extends ScrollPane {
                 TILE_SIZE * 3,
                 TILE_SIZE * 3);
     }
+
 }

@@ -3,11 +3,11 @@ public class TileVariant {
 
     // Player variants
     public static final int[] PLAYER_IDLE1 = { 0, 0 };
-    public static final int[] PLAYER_IDLE2 = { 1, 0 };
-    public static final int[] PLAYER_IDLE3 = { 2, 0 };
-    public static final int[] PLAYER_IDLE4 = { 3, 0 };
-    public static final int[] PLAYER_IDLE5 = { 4, 0 };
-    public static final int[] PLAYER_IDLE6 = { 5, 0 };
+    public static final int[] PLAYER_IDLE2 = { 3, 0 };
+    public static final int[] PLAYER_IDLE3 = { 6, 0 };
+    public static final int[] PLAYER_IDLE4 = { 9, 0 };
+    public static final int[] PLAYER_IDLE5 = { 12, 0 };
+    public static final int[] PLAYER_IDLE6 = { 15 , 0 };
 
     // Grass variants
     public static final int[] GRASS_SOLO = { 3, 3 };
