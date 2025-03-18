@@ -8,6 +8,8 @@ import org.json.JSONObject;
 
 public class RecieverThread extends Thread {
     private BufferedReader in;
+    private boolean spritesLoaded = false;
+    private boolean GUIloaded = false;
 
     public RecieverThread(Socket socket) {
         try {
@@ -21,8 +23,11 @@ public class RecieverThread extends Thread {
         String messageFromServer;
         System.out.println("RecieverThread started (LOADING)");
 
-        while (UpdateController.playerCanvas == null || UpdateController.scoreBoard == null
-                || UpdateController.gameRenderer == null) {
+        while (!spritesLoaded || !GUIloaded) {
+            if (UpdateController.playerCanvas != null && UpdateController.scoreBoard != null
+                    && UpdateController.gameRenderer != null) {
+                GUIloaded = true;
+            }
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
@@ -84,5 +89,15 @@ public class RecieverThread extends Thread {
             System.out.println("RecieverThread error: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    public void setSpritesLoaded(boolean spritesLoaded) {
+        this.spritesLoaded = spritesLoaded;
+        System.out.println("RECIEVERTHREAD: Sprites loaded");
+    }
+
+    public void setGUIloaded(boolean GUIloaded) {
+        System.out.println("RECIEVERTHREAD: GUI loaded");
+        this.GUIloaded = GUIloaded;
     }
 }

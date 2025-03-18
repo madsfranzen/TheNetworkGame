@@ -3,7 +3,7 @@ import java.net.Socket;
 
 import javafx.application.Application;
 
-public class App{
+public class App {
 
     public static DataOutputStream outToServer = null;
 
@@ -22,6 +22,7 @@ public class App{
             outToServer.writeBytes(name + '\n');
             recieverThread.start();
 
+            SpriteLoader.loadSprites(recieverThread);
             System.out.println("Connection initialized");
 
         } catch (Exception e) {
@@ -29,8 +30,9 @@ public class App{
             e.printStackTrace();
         }
 
-        SpriteLoader.loadSprites();
         Application.launch(Gui.class);
+
     }
+
 
 }

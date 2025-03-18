@@ -34,7 +34,7 @@ public class SpriteLoader {
     private static Image PLAYER_YELLOW;
     private static Image PLAYER_PURPLE;
 
-    public static void loadSprites() {
+    public static void loadSprites(RecieverThread recieverThread) {
         // Images = loaded on startup
         WATER = new Image(SpriteLoader.class.getResourceAsStream(WATER_PATH));
         FOAM = new Image(SpriteLoader.class.getResourceAsStream(FOAM_PATH));
@@ -49,6 +49,8 @@ public class SpriteLoader {
         PLAYER_RED = new Image(SpriteLoader.class.getResourceAsStream(PLAYER_PATH_RED));
         PLAYER_YELLOW = new Image(SpriteLoader.class.getResourceAsStream(PLAYER_PATH_YELLOW));
         PLAYER_PURPLE = new Image(SpriteLoader.class.getResourceAsStream(PLAYER_PATH_PURPLE));
+
+        recieverThread.setSpritesLoaded(true);
     }
 
     public static Image getSprite(String sprite) {
