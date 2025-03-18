@@ -19,6 +19,7 @@ public class RecieverThread extends Thread {
         System.out.println("RecieverThread started");
         try {
             while ((messageFromServer = in.readLine()) != null) {
+                // TODO : convert json recieved
                 System.out.println(messageFromServer);
             }
         } catch (IOException e) {
