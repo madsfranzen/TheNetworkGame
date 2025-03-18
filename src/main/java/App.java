@@ -1,9 +1,12 @@
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
 
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
@@ -18,12 +21,13 @@ public class App extends Application {
 
     private final GameRenderer gameRenderer = new GameRenderer(WINDOW_WIDTH, WINDOW_HEIGHT);
 
+    private static DataOutputStream outToServer = null;
+
     public static void main(String[] args) {
 
         // MAIN THREAD
         String name = "Mads";
         Socket clientSocket;
-        DataOutputStream outToServer = null;
         RecieverThread recieverThread;
 
         try {
@@ -72,6 +76,43 @@ public class App extends Application {
         toggleWindowedFullscreen(primaryStage);
 
         primaryStage.show();
+
+
+        // Sending actions to the server
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            switch (event.getCode()) {
+                case UP:
+                    try {
+                        outToServer.writeBytes(Action.MOVEUP + "\n");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    break;
+                case DOWN:
+                    try {
+                        outToServer.writeBytes(Action.MOVEDOWN + "\n");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    break;
+                case LEFT:
+                    try {
+                        outToServer.writeBytes(Action.MOVELEFT + "\n");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    break;
+                case RIGHT:
+                    try {
+                        outToServer.writeBytes(Action.MOVERIGHT + "\n");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    break;
+                case ESCAPE: System.exit(0);
+                default: break;
+            }
+        });
     }
 
     private void toggleWindowedFullscreen(Stage primaryStage) {
@@ -81,4 +122,5 @@ public class App extends Application {
         primaryStage.setHeight(screenBounds.getHeight());
         primaryStage.initStyle(StageStyle.UNDECORATED);
     }
+
 }
