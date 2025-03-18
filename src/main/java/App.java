@@ -40,6 +40,8 @@ public class App extends Application {
             System.out.println("CONNECTION INITIALIZATION ERROR: " + e.getMessage());
             e.printStackTrace();
         }
+
+        SpriteLoader.loadSprites();
         launch(args);
     }
 

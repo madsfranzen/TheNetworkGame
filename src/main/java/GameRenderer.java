@@ -86,38 +86,21 @@ public class GameRenderer extends ScrollPane {
     }
 
     public void drawGround() {
-        Image groundImage = SpriteLoader.getGroundTileset();
-
-        // Extract the appropriate tile from the tileset 😎
-        // Default to the first tile (0,0) in the tileset
-        int tileX = 3;
-        int tileY = 3;
-
-        // Here we could determine which tile to use based on game logic 🧠
-        // For example, different terrain types could use different tiles
-
-        // Calculate source coordinates in the tileset
-        int sourceX = tileX * TILE_SIZE;
-        int sourceY = tileY * TILE_SIZE;
-
         for (int x = 0; x < WORLD_WIDTH; x++) {
             for (int y = 0; y < WORLD_HEIGHT; y++) {
-
-                // Draw the specific tile from the tileset instead of the whole image 🎮
-                gc.drawImage(
-                        groundImage,
-                        sourceX, sourceY, TILE_SIZE, TILE_SIZE,
-                        x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-
-                // Skip the default drawing below and use our specific tile instead ✨
-                continue;
+                drawTile(x, y, "GRASS_SOLO");
             }
         }
     }
 
     public void drawTile(int x, int y, String sprite) {
-    
+        Image spriteImage = SpriteLoader.getSprite(sprite);
 
-        
+        int[] sourceXY = TileVariant.getVariant(sprite);
+        System.out.println("SOURCE XY: " + sourceXY[0] + ", " + sourceXY[1]);
+        gc.drawImage(
+                spriteImage,
+                sourceXY[0] * TILE_SIZE, sourceXY[1] * TILE_SIZE, TILE_SIZE, TILE_SIZE,
+                x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
     }
 }
