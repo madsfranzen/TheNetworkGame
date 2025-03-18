@@ -9,13 +9,11 @@ import javafx.scene.image.Image;
 
 public class PlayerCanvas extends Canvas {
 
-    private final int WORLD_WIDTH = 32;
-    private final int WORLD_HEIGHT = 32;
+    private final int WORLD_WIDTH;
+    private final int WORLD_HEIGHT;
+    private final int TILE_SIZE;
 
-    private final int TILE_SIZE = 64;
-
-    private final PlayerTile[][] playerTiles = new PlayerTile[WORLD_WIDTH][WORLD_HEIGHT];
-
+    private final PlayerTile[][] playerTiles;
     private final Set<PlayerPosition> activePlayerPositions;
 
     private GraphicsContext gcPlayer = getGraphicsContext2D();
@@ -26,11 +24,22 @@ public class PlayerCanvas extends Canvas {
     private int currentFrame;
     private long lastFrameTime;
 
-    public PlayerCanvas(int width, int height) {
+    /**
+     * @param width       The width of the canvas (pixels)
+     * @param height      The height of the canvas (pixels)
+     * @param worldWidth  The width of the world (tiles)
+     * @param worldHeight The height of the world (tiles)
+     * @param tileSize    The size of the tiles in the world (pixels)
+     */
+    public PlayerCanvas(int width, int height, int worldWidth, int worldHeight, int tileSize) {
         super(width, height);
+        this.WORLD_WIDTH = worldWidth;
+        this.WORLD_HEIGHT = worldHeight;
+        this.TILE_SIZE = tileSize;
         this.activePlayerPositions = Collections.synchronizedSet(new HashSet<>());
         this.animator = createAnimator();
         this.animator.start();
+        playerTiles = new PlayerTile[WORLD_WIDTH][WORLD_HEIGHT];
 
     }
 
@@ -74,6 +83,8 @@ public class PlayerCanvas extends Canvas {
                 TILE_SIZE * 3);
     }
 
+    // TODO: Not for use in production, this is just for generating placeholder map
+    // for testing
     public void drawPlayer() {
         playerTiles[12][12] = new PlayerTile();
         playerTiles[5][5] = new PlayerTile();
@@ -88,7 +99,6 @@ public class PlayerCanvas extends Canvas {
 
     public record PlayerPosition(int centerX, int centerY, String faction) {
     }
-
 
     /**
      * Stops the animation and releases resources.
