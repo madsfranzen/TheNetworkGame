@@ -23,7 +23,6 @@ public class App {
             recieverThread.start();
 
             SpriteLoader.loadSprites(recieverThread);
-            System.out.println("Connection initialized");
 
         } catch (Exception e) {
             System.out.println("CONNECTION INITIALIZATION ERROR: " + e.getMessage());

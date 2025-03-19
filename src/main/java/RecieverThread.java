@@ -26,7 +26,7 @@ public class RecieverThread extends Thread {
         while (!spritesLoaded || !GUIloaded) {
             if (UpdateController.playerCanvas != null && UpdateController.scoreBoard != null
                     && UpdateController.gameRenderer != null) {
-                GUIloaded = true;
+                setGUIloaded(true);
             }
             try {
                 Thread.sleep(100);
@@ -42,7 +42,9 @@ public class RecieverThread extends Thread {
             String welcomeMessage = in.readLine();
             System.out.println(welcomeMessage);
 
-            while ((messageFromServer = in.readLine()) != null) {
+            while (true) {
+                messageFromServer = in.readLine();
+                System.out.println("RecieverThread: " + messageFromServer);
                 // Parse JSON received
                 JSONObject jsonObject = new JSONObject(messageFromServer);
 

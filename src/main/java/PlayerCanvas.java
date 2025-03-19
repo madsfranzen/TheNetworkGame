@@ -82,11 +82,14 @@ public class PlayerCanvas extends Canvas {
     public void drawPlayer(int x, int y, String faction) {
         System.out.println("Drawing player at (" + x + ", " + y + ")");
         activePlayerPositions.add(new PlayerPosition(x, y, faction));
+        System.out.println(activePlayerPositions);
+        this.animator.start();
     }
 
     public void removePlayer(int x, int y) {
         System.out.println("Removing player at (" + x + ", " + y + ")");
         activePlayerPositions.removeIf(pos -> pos.centerX() == x && pos.centerY() == y);
+        System.out.println(activePlayerPositions);
     }
 
 

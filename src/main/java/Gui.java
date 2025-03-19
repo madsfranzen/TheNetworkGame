@@ -70,6 +70,10 @@ public class Gui extends Application {
         UpdateController.setPlayerCanvas(gameRenderer.getPlayerCanvas());
         UpdateController.setScoreBoard(scoreBoard);
 
+        primaryStage.show();
+        primaryStage.requestFocus();
+
+        setDataOutputStream();
 
         scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             switch (event.getCode()) {
@@ -78,7 +82,7 @@ public class Gui extends Application {
                         outToServer.writeBytes(Action.MOVEUP + "\n");
                         System.out.println("MOVEUP");
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        System.out.println("Error moving up" + e);
                     }
                     break;
                 case DOWN:
@@ -86,7 +90,7 @@ public class Gui extends Application {
                         outToServer.writeBytes(Action.MOVEDOWN + "\n");
                         System.out.println("MOVEDOWN");
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        System.out.println("Error moving down" + e);
                     }
                     break;
                 case LEFT:
@@ -94,7 +98,7 @@ public class Gui extends Application {
                         outToServer.writeBytes(Action.MOVELEFT + "\n");
                         System.out.println("MOVELEFT");
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        System.out.println("Error moving left" + e);
                     }
                     break;
                 case RIGHT:
@@ -102,7 +106,7 @@ public class Gui extends Application {
                         outToServer.writeBytes(Action.MOVERIGHT + "\n");
                         System.out.println("MOVERIGHT");
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        System.out.println("Error moving right" + e);
                     }
                     break;
                 case ESCAPE: System.exit(0);
@@ -110,9 +114,6 @@ public class Gui extends Application {
             }
         });
 
-        setDataOutputStream();
-        primaryStage.show();
-        primaryStage.requestFocus();
     }
 
     public static void setDataOutputStream() {
