@@ -80,33 +80,33 @@ public class Gui extends Application {
                 case UP:
                     try {
                         outToServer.writeBytes(Action.MOVEUP + "\n");
-                        System.out.println("MOVEUP");
+                        System.out.println(Action.MOVEUP);
                     } catch (IOException e) {
-                        System.out.println("Error moving up" + e);
+                        System.out.println("Error moving up: " + e);
                     }
                     break;
                 case DOWN:
                     try {
                         outToServer.writeBytes(Action.MOVEDOWN + "\n");
-                        System.out.println("MOVEDOWN");
+                        System.out.println(Action.MOVEDOWN);
                     } catch (IOException e) {
-                        System.out.println("Error moving down" + e);
+                        System.out.println("Error moving down: " + e);
                     }
                     break;
                 case LEFT:
                     try {
                         outToServer.writeBytes(Action.MOVELEFT + "\n");
-                        System.out.println("MOVELEFT");
+                        System.out.println(Action.MOVELEFT);
                     } catch (IOException e) {
-                        System.out.println("Error moving left" + e);
+                        System.out.println("Error moving left: " + e);
                     }
                     break;
                 case RIGHT:
                     try {
                         outToServer.writeBytes(Action.MOVERIGHT + "\n");
-                        System.out.println("MOVERIGHT");
+                        System.out.println(Action.MOVERIGHT);
                     } catch (IOException e) {
-                        System.out.println("Error moving right" + e);
+                        System.out.println("Error moving right: " + e);
                     }
                     break;
                 case ESCAPE: System.exit(0);

@@ -70,7 +70,7 @@ public class RecieverThread extends Thread {
                         String contentType = fieldState.getString("contentType");
                         int zIndex = fieldState.getInt("zIndex");
 
-                        // Optional player field
+                        // nullable player field
                         String player = fieldState.has("player") ? fieldState.getString("player") : null;
 
                         System.out.println("Update at (" + x + "," + y + "): " +
@@ -78,7 +78,7 @@ public class RecieverThread extends Thread {
                                 (player != null ? ", Player=" + player : ""));
 
                         if (player != null) {
-                            UpdateController.playerCanvas.drawPlayer(x, y, "blue");
+                            UpdateController.playerCanvas.drawPlayer(x, y, "red");
                         } else {
                             UpdateController.playerCanvas.removePlayer(x, y);
                         }
