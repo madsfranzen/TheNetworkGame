@@ -74,7 +74,7 @@ public class PlayerCanvas extends Canvas {
                 TILE_SIZE * 3,
                 TILE_SIZE * 3,
                 x * TILE_SIZE - TILE_SIZE,
-                y * TILE_SIZE - TILE_SIZE,
+                y * TILE_SIZE - TILE_SIZE - TILE_SIZE/2,
                 TILE_SIZE * 3,
                 TILE_SIZE * 3);
     }
