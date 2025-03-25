@@ -57,10 +57,10 @@ public class GameRenderer extends ScrollPane {
         canvasContainer.getChildren().add(groundCanvas0);
         canvasContainer.getChildren().add(playerCanvas0);
         canvasContainer.getChildren().add(plateauCanvas0);
-        canvasContainer.getChildren().add(groundCanvas1);
-        canvasContainer.getChildren().add(playerCanvas1);
-        canvasContainer.getChildren().add(plateauCanvas1);
-        canvasContainer.getChildren().add(groundCanvas2);
+        // canvasContainer.getChildren().add(groundCanvas1);
+        // canvasContainer.getChildren().add(playerCanvas1);
+        // canvasContainer.getChildren().add(plateauCanvas1);
+        // canvasContainer.getChildren().add(groundCanvas2);
         setupScrollPane(width, height);
 
         // Add the canvas container to the scroll pane
