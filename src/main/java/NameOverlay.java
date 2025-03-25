@@ -16,6 +16,7 @@ public class NameOverlay extends Canvas {
     private GraphicsContext gcPlayer = getGraphicsContext2D();
 
     public void drawName(int x, int y, String playerName) {
+        removeName(x, y);
         gcPlayer.setFill(Color.WHITE);
         gcPlayer.setFont(Font.font("Arial", 12));
         gcPlayer.setStroke(Color.BLACK);
