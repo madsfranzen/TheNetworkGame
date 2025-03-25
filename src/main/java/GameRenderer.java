@@ -1,5 +1,4 @@
 import java.io.BufferedReader;
-import java.io.File;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -7,7 +6,6 @@ import org.json.JSONObject;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.StackPane;
-
 public class GameRenderer extends ScrollPane {
 
     private final StackPane canvasContainer;
@@ -19,10 +17,16 @@ public class GameRenderer extends ScrollPane {
 
     private final Canvas gridCanvas = new Canvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE);
 
-    private final GroundCanvas groundCanvas0 = new GroundCanvas(WORLD_WIDTH, WORLD_HEIGHT);
-    private final GroundCanvas groundCanvas1 = new GroundCanvas(WORLD_WIDTH, WORLD_HEIGHT);
-
-    private final PlayerCanvas playerCanvas = new PlayerCanvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE,
+    private final WaterCanvas waterCanvas = new WaterCanvas(WORLD_WIDTH, WORLD_HEIGHT);
+    private final GroundCanvas groundCanvas0 = new GroundCanvas(WORLD_WIDTH, WORLD_HEIGHT, 0);
+    private final GroundCanvas groundCanvas1 = new GroundCanvas(WORLD_WIDTH, WORLD_HEIGHT, 1);
+    private final GroundCanvas groundCanvas2 = new GroundCanvas(WORLD_WIDTH, WORLD_HEIGHT, 2);
+    private final PlateauCanvas plateauCanvas0 = new PlateauCanvas(WORLD_WIDTH, WORLD_HEIGHT, 1);
+    private final PlateauCanvas plateauCanvas1 = new PlateauCanvas(WORLD_WIDTH, WORLD_HEIGHT, 2);
+    private final PlayerCanvas playerCanvas0 = new PlayerCanvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE,
+            WORLD_WIDTH,
+            WORLD_HEIGHT, TILE_SIZE);
+    private final PlayerCanvas playerCanvas1 = new PlayerCanvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE,
             WORLD_WIDTH,
             WORLD_HEIGHT, TILE_SIZE);
 
@@ -35,17 +39,28 @@ public class GameRenderer extends ScrollPane {
         // Setup canvas container
         canvasContainer = new StackPane();
 
+        canvasContainer.setStyle("-fx-background-color: rgb(99, 165, 164);"); // Using CSS for background color 😎
+
         gridCanvas.setMouseTransparent(false);
         canvasContainer.getChildren().add(gridCanvas);
 
+        waterCanvas.setMouseTransparent(true);
         groundCanvas0.setMouseTransparent(true);
         groundCanvas1.setMouseTransparent(true);
-        playerCanvas.setMouseTransparent(true);
+        plateauCanvas0.setMouseTransparent(true);
+        plateauCanvas1.setMouseTransparent(true);
+        playerCanvas0.setMouseTransparent(true);
+        playerCanvas1.setMouseTransparent(true);
+        groundCanvas2.setMouseTransparent(true);
 
+        canvasContainer.getChildren().add(waterCanvas);
         canvasContainer.getChildren().add(groundCanvas0);
+        canvasContainer.getChildren().add(playerCanvas0);
+        canvasContainer.getChildren().add(plateauCanvas0);
         canvasContainer.getChildren().add(groundCanvas1);
-        canvasContainer.getChildren().add(playerCanvas);
-
+        canvasContainer.getChildren().add(playerCanvas1);
+        canvasContainer.getChildren().add(plateauCanvas1);
+        canvasContainer.getChildren().add(groundCanvas2);
         setupScrollPane(width, height);
 
         // Add the canvas container to the scroll pane
@@ -92,9 +107,15 @@ public class GameRenderer extends ScrollPane {
                 }
             }
 
-            // this is to future proof for more groundcanvases
+            this.waterCanvas.initialize(0, worldTileMap);
             this.groundCanvas0.initialize(0, worldTileMap);
+
+            this.plateauCanvas0.initialize(1, worldTileMap);
             this.groundCanvas1.initialize(1, worldTileMap);
+            
+            this.plateauCanvas1.initialize(1, worldTileMap);
+            this.groundCanvas2.initialize(2, worldTileMap);
+
 
         } catch (Exception e) {
             System.err.println("❌ Error loading world map: " + e.getMessage());
@@ -148,28 +169,28 @@ public class GameRenderer extends ScrollPane {
 
         // Completely disable scroll events
         setOnScroll(event -> {
-            event.consume();
+            // event.consume();
         });
 
         // Add scroll event filter to catch all scroll events at the capture phase
         addEventFilter(javafx.scene.input.ScrollEvent.ANY, event -> {
-            event.consume();
+            // event.consume();
         });
 
         // Disable mouse drag scrolling
-        setPannable(false);
+        setPannable(true);
 
         // Lock scroll values
         hvalueProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal.doubleValue() != 0.5) {
-                setHvalue(0.5);
-            }
+            // if (newVal.doubleValue() != 0.5) {
+            //     setHvalue(0.5);
+            // }
         });
 
         vvalueProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal.doubleValue() != 0.5) {
-                setVvalue(0.5);
-            }
+            // if (newVal.doubleValue() != 0.5) {
+            //     setVvalue(0.5);
+            // }
         });
 
         // Set initial scroll position
@@ -180,7 +201,11 @@ public class GameRenderer extends ScrollPane {
         setFocusTraversable(false);
     }
 
-    public PlayerCanvas getPlayerCanvas() {
-        return playerCanvas;
+    public PlayerCanvas getPlayerCanvas0() {
+        return playerCanvas0;
+    }
+
+    public PlayerCanvas getPlayerCanvas1() {
+        return playerCanvas1;
     }
 }

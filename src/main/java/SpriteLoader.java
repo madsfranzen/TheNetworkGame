@@ -10,8 +10,8 @@ import java.util.Map;
  * Ensures all images are properly loaded on time and cached for reuse
  */
 public class SpriteLoader {
-    // Cache for storing loaded images to avoid reloading
     private static final Map<String, Image> imageCache = new HashMap<>();
+    private static boolean isInitialized = false;
 
     private static final String WATER_PATH = "/assets/Terrain/Water/Water.png";
     private static final String FOAM_PATH = "/assets/Terrain/Water/Foam/Foam.png";
@@ -40,22 +40,28 @@ public class SpriteLoader {
     private static Image PLAYER_PURPLE;
 
     public static void loadSprites(RecieverThread recieverThread) {
-        // Images = loaded on startup
-        WATER = new Image(SpriteLoader.class.getResourceAsStream(WATER_PATH));
-        FOAM = new Image(SpriteLoader.class.getResourceAsStream(FOAM_PATH));
-        ROCKS1 = new Image(SpriteLoader.class.getResourceAsStream(ROCKS_PATH_PREFIX + "1.png"));
-        ROCKS2 = new Image(SpriteLoader.class.getResourceAsStream(ROCKS_PATH_PREFIX + "2.png"));
-        ROCKS3 = new Image(SpriteLoader.class.getResourceAsStream(ROCKS_PATH_PREFIX + "3.png"));
-        GROUND_TILEMAP = new Image(SpriteLoader.class.getResourceAsStream(GROUND_TILEMAP_PATH));
-        ELEVATION_TILEMAP = new Image(SpriteLoader.class.getResourceAsStream(ELEVATION_TILEMAP_PATH));
-        SHADOWS = new Image(SpriteLoader.class.getResourceAsStream(SHADOWS_PATH));
-        BRIDGE = new Image(SpriteLoader.class.getResourceAsStream(BRIDGE_PATH));
-        PLAYER_BLUE = new Image(SpriteLoader.class.getResourceAsStream(PLAYER_PATH_BLUE));
-        PLAYER_RED = new Image(SpriteLoader.class.getResourceAsStream(PLAYER_PATH_RED));
-        PLAYER_YELLOW = new Image(SpriteLoader.class.getResourceAsStream(PLAYER_PATH_YELLOW));
-        PLAYER_PURPLE = new Image(SpriteLoader.class.getResourceAsStream(PLAYER_PATH_PURPLE));
+        try {
+            // Images = loaded on startup
+            WATER = loadImage(WATER_PATH);
+            FOAM = loadImage(FOAM_PATH);
+            ROCKS1 = loadImage(ROCKS_PATH_PREFIX + "1.png");
+            ROCKS2 = loadImage(ROCKS_PATH_PREFIX + "2.png");
+            ROCKS3 = loadImage(ROCKS_PATH_PREFIX + "3.png");
+            GROUND_TILEMAP = loadImage(GROUND_TILEMAP_PATH);
+            ELEVATION_TILEMAP = loadImage(ELEVATION_TILEMAP_PATH);
+            SHADOWS = loadImage(SHADOWS_PATH);
+            BRIDGE = loadImage(BRIDGE_PATH);
+            PLAYER_BLUE = loadImage(PLAYER_PATH_BLUE);
+            PLAYER_RED = loadImage(PLAYER_PATH_RED);
+            PLAYER_YELLOW = loadImage(PLAYER_PATH_YELLOW);
+            PLAYER_PURPLE = loadImage(PLAYER_PATH_PURPLE);
 
-        recieverThread.setSpritesLoaded(true);
+            isInitialized = true;
+            recieverThread.setSpritesLoaded(true);
+        } catch (Exception e) {
+            System.err.println("Error loading sprites: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -65,7 +71,12 @@ public class SpriteLoader {
         // Preload essential images
         getWaterTile();
         getGroundTileset();
+        getElevationTileset();
         getBridgeTileset();
+        getRocksImage(1);
+        getRocksImage(2);
+        getRocksImage(3);
+        getRocksImage(4);
     }
 
     /**
@@ -75,15 +86,6 @@ public class SpriteLoader {
         // This class should not be instantiated
     }
 
-
-
-    /**
-     * Load an image from the specified path
-     * 
-     * @param path The resource path
-     * @return The loaded Image
-     * @throws RuntimeException if the image cannot be loaded
-     */
     private static Image loadImage(String path) {
         try {
             if (imageCache.containsKey(path)) {
@@ -102,6 +104,11 @@ public class SpriteLoader {
                     return createFallbackImage();
                 }
 
+                // Wait for the image to be fully loaded
+                while (!image.isBackgroundLoading() && image.getProgress() < 1.0) {
+                    Thread.sleep(10);
+                }
+
                 imageCache.put(path, image);
                 return image;
             }
@@ -111,13 +118,7 @@ public class SpriteLoader {
         }
     }
 
-    /**
-     * Create a fallback image for when a resource cannot be loaded
-     * 
-     * @return A simple fallback image
-     */
     private static Image createFallbackImage() {
-        // Simplified fallback - we could create a more sophisticated fallback if needed
         WritableImage fallbackImage = new WritableImage(64, 64);
         for (int y = 0; y < 64; y++) {
             for (int x = 0; x < 64; x++) {
@@ -131,13 +132,17 @@ public class SpriteLoader {
         return fallbackImage;
     }
 
+    public static boolean isInitialized() {
+        return isInitialized;
+    }
+
     // Methods to access individual sprites
 
     /**
      * Get the water tile image
      */
     public static Image getWaterTile() {
-        return WATER;
+        return loadImage(WATER_PATH);
     }
 
     /**
@@ -179,7 +184,7 @@ public class SpriteLoader {
      * Get the elevation tileset for plateaus and stairs
      */
     public static Image getElevationTileset() {
-        return ELEVATION_TILEMAP;
+        return loadImage(ELEVATION_TILEMAP_PATH);
     }
 
     /**

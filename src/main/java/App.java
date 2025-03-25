@@ -19,10 +19,11 @@ public class App {
             outToServer = new DataOutputStream(clientSocket.getOutputStream());
             recieverThread = new RecieverThread(clientSocket);
 
+            SpriteLoader.loadSprites(recieverThread);
+
             outToServer.writeBytes(name + '\n');
             recieverThread.start();
 
-            SpriteLoader.loadSprites(recieverThread);
 
         } catch (Exception e) {
             System.out.println("CONNECTION INITIALIZATION ERROR: " + e.getMessage());

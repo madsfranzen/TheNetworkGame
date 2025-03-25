@@ -67,7 +67,8 @@ public class Gui extends Application {
         toggleWindowedFullscreen(primaryStage);
 
         UpdateController.setGameRenderer(gameRenderer);
-        UpdateController.setPlayerCanvas(gameRenderer.getPlayerCanvas());
+        UpdateController.setPlayerCanvas0(gameRenderer.getPlayerCanvas0());
+        UpdateController.setPlayerCanvas1(gameRenderer.getPlayerCanvas1());
         UpdateController.setScoreBoard(scoreBoard);
 
         primaryStage.show();

@@ -1,8 +1,7 @@
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 
-public class GroundCanvas extends Canvas {
+public class PlateauCanvas extends Canvas {
 
     private final GraphicsContext gc;
     private int WORLD_WIDTH;
@@ -11,84 +10,47 @@ public class GroundCanvas extends Canvas {
     private int zIndex;
     private int layer;
     private String[][][] worldTileMap;
-    private boolean isInitialized = false;
 
     // ALL TILESHEETS
 
-    public GroundCanvas(int width, int height, int zIndex) {
+    public PlateauCanvas(int width, int height, int zIndex) {
         super(width * 64, height * 64);
         this.WORLD_WIDTH = width;
         this.WORLD_HEIGHT = height;
         this.zIndex = zIndex;
-        
-        // Initialize graphics context
         this.gc = this.getGraphicsContext2D();
-        
-        // Set a background color while loading
-        gc.setFill(Color.GRAY);
-        gc.fillRect(0, 0, getWidth(), getHeight());
-        
-        // Force canvas to be managed and visible
-        this.setManaged(true);
-        this.setVisible(true);
-        
-        // Force initial layout
-        this.layout();
+
     }
 
     public void initialize(int layer, String[][][] worldTileMap) {
         this.layer = layer;
         this.worldTileMap = worldTileMap;
-        isInitialized = true;
-        
-        // Clear and redraw on JavaFX Application Thread
-        javafx.application.Platform.runLater(() -> {
-            gc.clearRect(0, 0, getWidth(), getHeight());
-            drawWorldMap();
-        });
+        drawWorldMap();
     }
 
     private void drawWorldMap() {
-        if (!isInitialized) {
-            System.err.println("GroundCanvas not initialized yet!");
-            return;
-        }
 
         System.out.println("Width: " + this.getWidth() + " Height: " + this.getHeight());
-
-        // Clear the canvas first
-        gc.clearRect(0, 0, getWidth(), getHeight());
 
         for (layer = 0; layer < worldTileMap[0][0].length; layer++) {
             for (int x = 0; x < WORLD_WIDTH; x++) {
                 for (int y = 0; y < WORLD_HEIGHT; y++) {
                     String tile = worldTileMap[x][y][layer];
                     if (tile != null) {
-                        try {
-                            switch (tile) {
-                                case "GRASS" -> drawGrass(x, y, true);
-                                case "SAND" -> drawSand(x, y, true);
-                                case "SHADOW" -> drawShadow(x, y);
-                                case "STAIRS" -> drawStairs(x, y, true);
-                                case "BRIDGESHADOW" -> drawBridgeShadow(x, y);
-                                case "WALL" -> drawWall(x, y, true, layer);
-                                case "GRASSFILL" -> drawGrassFill(x, y);
-                                case "SANDFILL" -> drawSandFill(x, y);
-                                default -> {}
+                        switch (tile) {
+                            case "PLATEAU" -> {
+                                drawPlateau(x, y, true);
                             }
-                        } catch (Exception e) {
-                            System.err.println("Error drawing tile at (" + x + "," + y + "): " + e.getMessage());
-                            // Draw error tile
-                            gc.setFill(Color.RED);
-                            gc.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                            case "BRIDGE" -> {
+                                drawBridge(x, y, true);
+                            }
+                            default -> {
+                            }
                         }
                     }
                 }
             }
         }
-        
-        // Force layout update
-        this.layout();
     }
 
     private static record TileVariant(String name, int x, int y) {

@@ -11,10 +11,18 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 public class ScoreBoard extends StackPane {
-    private final Text scoreBoardText = new Text();
+    private final Text scoreBoardText;
 
     public ScoreBoard(int width, int height) {
         super();
+        
+        // Initialize text node first
+        scoreBoardText = new Text();
+        
+        // Set initial text to avoid null layout issues
+        scoreBoardText.setText("Loading...");
+        
+        // Now set properties
         scoreBoardText.setFont(Font.font("Arial", FontWeight.BOLD, 20));
         scoreBoardText.setFill(Color.WHITE);
         scoreBoardText.setStyle("-fx-background-color: #f0f0f0;");
@@ -22,6 +30,12 @@ public class ScoreBoard extends StackPane {
         scoreBoardText.setWrappingWidth(width - 20); // Set max width with 10px padding on each side
         scoreBoardText.setLineSpacing(10);
         scoreBoardText.setTextAlignment(TextAlignment.LEFT);
+        
+        // Force layout computation
+        scoreBoardText.setManaged(true);
+        scoreBoardText.setVisible(true);
+        
+        // Add to pane
         this.getChildren().add(scoreBoardText);
         
         // Align text to the top of the pane
@@ -30,9 +44,13 @@ public class ScoreBoard extends StackPane {
         // Add margin around the text instead of padding
         StackPane.setMargin(scoreBoardText, new Insets(10, 10, 10, 10));
         
+        // Set pane size
         this.setPrefSize(width, height);
         this.setMinSize(width, height);
         this.setMaxSize(width, height);
+        
+        // Force layout pass
+        this.layout();
     }
 
     public void updateScoreBoard(JSONObject scoreBoard) {
@@ -48,6 +66,12 @@ public class ScoreBoard extends StackPane {
             scoreBoardString.append(playerScore);
             scoreBoardString.append("\n");
         }
-        scoreBoardText.setText(scoreBoardString.toString());
+        
+        // Update text on JavaFX Application Thread
+        javafx.application.Platform.runLater(() -> {
+            scoreBoardText.setText(scoreBoardString.toString());
+            // Force layout update
+            this.layout();
+        });
     }
 }
