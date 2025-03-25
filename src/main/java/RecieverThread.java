@@ -78,10 +78,15 @@ public class RecieverThread extends Thread {
                                 (player != null ? ", Player=" + player : ""));
 
                         if (player != null) {
-                            if (zIndex == 0) {
+                            if (zIndex == 0 && !contentType.equals("STAIRS")) {
+                                System.out.println("LAYER 0: Drawing player     at (" + x + "," + y + ") with zIndex "
+                                        + zIndex + " on contentType " + contentType);
                                 UpdateController.playerCanvas0.drawPlayer(x, y, "red");
-                            } else if (zIndex == 1) {
-                                UpdateController.playerCanvas1.drawPlayer(x, y, "blue");
+                            }
+                            if (zIndex == 1 || contentType.equals("STAIRS")) {
+                                System.out.println("LAYER 1: Drawing player at (" + x + "," + y + ") with zIndex "
+                                        + zIndex + " on contentType " + contentType);
+                                UpdateController.playerCanvas1.drawPlayer(x, y, "red");
                             }
                         } else {
                             UpdateController.playerCanvas0.removePlayer(x, y);
