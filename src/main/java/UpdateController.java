@@ -3,12 +3,13 @@ public class UpdateController {
     public static PlayerCanvas playerCanvas0;
     public static PlayerCanvas playerCanvas1;
     public static ScoreBoard scoreBoard;
-
+    public static NameOverlay nameOverlay;
     public UpdateController() {
         gameRenderer = null;
         playerCanvas0 = null;
         playerCanvas1 = null;
         scoreBoard = null;
+        nameOverlay = null;
     }
 
     public static void setGameRenderer(GameRenderer gameRenderer) {
@@ -25,6 +26,10 @@ public class UpdateController {
 
     public static void setScoreBoard(ScoreBoard scoreBoard) {
         UpdateController.scoreBoard = scoreBoard;
+    }
+
+    public static void setNameOverlay(NameOverlay nameOverlay) {
+        UpdateController.nameOverlay = nameOverlay;
     }
 
 }

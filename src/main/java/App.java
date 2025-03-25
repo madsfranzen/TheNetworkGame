@@ -10,7 +10,7 @@ public class App {
     public static void main(String[] args) {
 
         // MAIN THREAD
-        String name = "Mads";
+        String name = "Jensemanden";
         Socket clientSocket;
         RecieverThread recieverThread;
 

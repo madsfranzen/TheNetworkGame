@@ -30,6 +30,7 @@ public class Gui extends Application {
     private final GameRenderer gameRenderer = new GameRenderer(WINDOW_WIDTH, WINDOW_HEIGHT);
     public static final ScoreBoard scoreBoard = new ScoreBoard(SCOREBOARD_WIDTH, SCOREBOARD_HEIGHT);
     private static DataOutputStream outToServer = null;
+    private final NameOverlay nameOverlay = new NameOverlay(WINDOW_WIDTH, WINDOW_HEIGHT);
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -38,6 +39,7 @@ public class Gui extends Application {
 
         // Add GameRenderer as the base layer
         mainPane.getChildren().add(gameRenderer);
+        mainPane.getChildren().add(nameOverlay);
 
         // Style the ScoreBoard to make it visible
         scoreBoard.setStyle("-fx-background-color: rgba(0,0,0,0.5); -fx-border-color: white; -fx-border-width: 1;");
@@ -76,6 +78,7 @@ public class Gui extends Application {
         UpdateController.setPlayerCanvas0(gameRenderer.getPlayerCanvas0());
         UpdateController.setPlayerCanvas1(gameRenderer.getPlayerCanvas1());
         UpdateController.setScoreBoard(scoreBoard);
+        UpdateController.setNameOverlay(nameOverlay);
 
         primaryStage.show();
         primaryStage.requestFocus();

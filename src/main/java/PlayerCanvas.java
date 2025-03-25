@@ -87,6 +87,7 @@ public class PlayerCanvas extends Canvas {
 
     public void removePlayer(int x, int y) {
         System.out.println("Removing player at (" + x + ", " + y + ")");
+
         activePlayerPositions.removeIf(pos -> pos.centerX() == x && pos.centerY() == y);
     }
 

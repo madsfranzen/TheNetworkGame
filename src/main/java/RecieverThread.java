@@ -2,6 +2,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -11,12 +13,20 @@ public class RecieverThread extends Thread {
     private boolean spritesLoaded = false;
     private boolean GUIloaded = false;
 
+    private HashMap<String, String> players = new HashMap<>();
+    private ArrayList<String> playerColors = new ArrayList<>();
+
     public RecieverThread(Socket socket) {
         try {
             this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        playerColors.add("red");
+        playerColors.add("blue");
+        playerColors.add("yellow");
+        playerColors.add("purple");
     }
 
     public void run() {
@@ -52,7 +62,12 @@ public class RecieverThread extends Thread {
                 // Parse scoreBoard
                 if (jsonObject.has("scoreBoard")) {
                     JSONObject scoreBoard = jsonObject.getJSONObject("scoreBoard");
-                    UpdateController.scoreBoard.updateScoreBoard(scoreBoard);
+                    UpdateController.scoreBoard.updateScoreBoard(scoreBoard, players);
+                    JSONArray playersConnected = scoreBoard.getJSONArray("players");
+                    for (int i = 0; i < playersConnected.length(); i++) {
+                        JSONObject player = playersConnected.getJSONObject(i);
+                        players.put(player.getString("playerName"), playerColors.get(i % playerColors.size()));
+                    }
                 }
 
                 // Parse gameState
@@ -79,18 +94,17 @@ public class RecieverThread extends Thread {
 
                         if (player != null) {
                             if (zIndex == 0 && !contentType.equals("STAIRS")) {
-                                System.out.println("LAYER 0: Drawing player     at (" + x + "," + y + ") with zIndex "
-                                        + zIndex + " on contentType " + contentType);
-                                UpdateController.playerCanvas0.drawPlayer(x, y, "red");
+                                UpdateController.playerCanvas0.drawPlayer(x, y, players.get(player));
+                                UpdateController.nameOverlay.drawName(x, y, player);
                             }
                             if (zIndex == 1 || contentType.equals("STAIRS")) {
-                                System.out.println("LAYER 1: Drawing player at (" + x + "," + y + ") with zIndex "
-                                        + zIndex + " on contentType " + contentType);
-                                UpdateController.playerCanvas1.drawPlayer(x, y, "red");
+                                UpdateController.playerCanvas1.drawPlayer(x, y, players.get(player));
+                                UpdateController.nameOverlay.drawName(x, y, player);
                             }
                         } else {
                             UpdateController.playerCanvas0.removePlayer(x, y);
                             UpdateController.playerCanvas1.removePlayer(x, y);
+                            UpdateController.nameOverlay.removeName(x, y);
                         }
                     }
                 }
