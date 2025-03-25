@@ -24,7 +24,8 @@ public class RecieverThread extends Thread {
         System.out.println("RecieverThread started (LOADING)");
 
         while (!spritesLoaded || !GUIloaded) {
-            if (UpdateController.playerCanvas0 != null && UpdateController.playerCanvas1 != null && UpdateController.scoreBoard != null
+            if (UpdateController.playerCanvas0 != null && UpdateController.playerCanvas1 != null
+                    && UpdateController.scoreBoard != null
                     && UpdateController.gameRenderer != null) {
                 setGUIloaded(true);
             }
@@ -81,10 +82,10 @@ public class RecieverThread extends Thread {
                                 UpdateController.playerCanvas0.drawPlayer(x, y, "red");
                             } else if (zIndex == 1) {
                                 UpdateController.playerCanvas1.drawPlayer(x, y, "blue");
-                            } else {
-                                UpdateController.playerCanvas0.removePlayer(x, y);
-                                UpdateController.playerCanvas1.removePlayer(x, y);
                             }
+                        } else {
+                            UpdateController.playerCanvas0.removePlayer(x, y);
+                            UpdateController.playerCanvas1.removePlayer(x, y);
                         }
                     }
                 }
