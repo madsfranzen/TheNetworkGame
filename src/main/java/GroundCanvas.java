@@ -31,9 +31,6 @@ public class GroundCanvas extends Canvas {
         // Force canvas to be managed and visible
         this.setManaged(true);
         this.setVisible(true);
-        
-        // Force initial layout
-        this.layout();
     }
 
     public void initialize(int layer, String[][][] worldTileMap) {
@@ -86,9 +83,6 @@ public class GroundCanvas extends Canvas {
                 }
             }
         }
-        
-        // Force layout update
-        this.layout();
     }
 
     private static record TileVariant(String name, int x, int y) {
