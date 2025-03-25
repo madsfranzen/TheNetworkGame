@@ -151,6 +151,7 @@ public class GameRenderer extends ScrollPane {
                 default:
                     break;
             }
+ 
         });
 
         // Additional key event handler to ensure arrow keys are blocked
