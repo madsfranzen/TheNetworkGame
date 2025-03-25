@@ -19,8 +19,8 @@ import javafx.util.Duration;
 public class Gui extends Application {
 
     private final Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-    private final int WINDOW_WIDTH = (int) screenBounds.getWidth() - 800;
-    private final int WINDOW_HEIGHT = (int) screenBounds.getHeight() - 400;
+    private final int WINDOW_WIDTH = (int) screenBounds.getWidth();
+    private final int WINDOW_HEIGHT = (int) screenBounds.getHeight();
     private static final int SCOREBOARD_WIDTH = 180;
     private static final int SCOREBOARD_HEIGHT = 300;
 
@@ -70,7 +70,7 @@ public class Gui extends Application {
         primaryStage.setResizable(false);
         primaryStage.setTitle("THE NETWORK GAME CLIENT");
 
-        // toggleWindowedFullscreen(primaryStage);
+        toggleWindowedFullscreen(primaryStage);
 
         UpdateController.setGameRenderer(gameRenderer);
         UpdateController.setPlayerCanvas0(gameRenderer.getPlayerCanvas0());
