@@ -194,8 +194,8 @@ public class GameRenderer extends ScrollPane {
         });
 
         // Set initial scroll position
-        setHvalue(0.5);
-        setVvalue(0.5);
+        setHvalue(0);
+        setVvalue(0);
 
         // Disable focus traversal to prevent keyboard navigation
         setFocusTraversable(false);
