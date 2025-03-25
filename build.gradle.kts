@@ -54,7 +54,7 @@ sourceSets {
         java.srcDir("src/main/java")
         resources {
             srcDir("src/main/resources")
-            include("**/*.png", "**/*.jpg", "**/*.fxml", "**/*.css", "**/*.properties")
+            include("**/*.png", "**/*.jpg", "**/*.fxml", "**/*.css", "**/*.properties", "**/*.json")
         }
     }
 }

@@ -1,9 +1,12 @@
+import java.io.BufferedReader;
+import java.io.File;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 
 public class GameRenderer extends ScrollPane {
 
@@ -12,14 +15,12 @@ public class GameRenderer extends ScrollPane {
     private final int WORLD_HEIGHT = 32;
     private final int TILE_SIZE = 64;
 
+    private String[][][] worldTileMap;
+
     private final Canvas gridCanvas = new Canvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE);
-    private final GraphicsContext gc = gridCanvas.getGraphicsContext2D();
 
-    private final Canvas waterCanvas = new Canvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE);
-    private final GraphicsContext gcWater = waterCanvas.getGraphicsContext2D();
-
-    private final Canvas groundCanvas = new Canvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE);
-    private final GraphicsContext gcGround = groundCanvas.getGraphicsContext2D();
+    private final GroundCanvas groundCanvas0 = new GroundCanvas(WORLD_WIDTH, WORLD_HEIGHT);
+    private final GroundCanvas groundCanvas1 = new GroundCanvas(WORLD_WIDTH, WORLD_HEIGHT);
 
     private final PlayerCanvas playerCanvas = new PlayerCanvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE,
             WORLD_WIDTH,
@@ -34,18 +35,15 @@ public class GameRenderer extends ScrollPane {
         // Setup canvas container
         canvasContainer = new StackPane();
 
-        drawGrid();
-        drawGround();
-
         gridCanvas.setMouseTransparent(false);
         canvasContainer.getChildren().add(gridCanvas);
 
-        waterCanvas.setMouseTransparent(true);
-        groundCanvas.setMouseTransparent(true);
+        groundCanvas0.setMouseTransparent(true);
+        groundCanvas1.setMouseTransparent(true);
         playerCanvas.setMouseTransparent(true);
 
-        canvasContainer.getChildren().add(waterCanvas);
-        canvasContainer.getChildren().add(groundCanvas);
+        canvasContainer.getChildren().add(groundCanvas0);
+        canvasContainer.getChildren().add(groundCanvas1);
         canvasContainer.getChildren().add(playerCanvas);
 
         setupScrollPane(width, height);
@@ -53,6 +51,55 @@ public class GameRenderer extends ScrollPane {
         // Add the canvas container to the scroll pane
         this.setContent(canvasContainer);
 
+            System.out.println("Loading world map");
+        loadWorldMap();
+
+    }
+
+    private void loadWorldMap() {
+        try {
+            // Read the JSON file using ClassLoader
+            var classLoader = getClass().getClassLoader();
+            var resource = classLoader.getResourceAsStream("World.json");
+            if (resource == null) {
+                throw new RuntimeException("Could not find World.json in resources");
+            }
+            
+            StringBuilder content = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader(new java.io.InputStreamReader(resource))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    content.append(line);
+                }
+            }
+            
+            JSONArray worldMapFile = new JSONArray(content.toString());
+
+            // Get the dimensions from the JSON array
+            int worldWidth = worldMapFile.length();
+            int worldHeight = worldMapFile.getJSONArray(0).length();
+            int layerCount = worldMapFile.getJSONArray(0).getJSONArray(0).length();
+            
+            // Create the world tile map with the correct dimensions
+            worldTileMap = new String[worldWidth][worldHeight][layerCount];
+
+            for (int x = 0; x < worldWidth; x++) {
+                for (int y = 0; y < worldHeight; y++) {
+                    for (int layer = 0; layer < layerCount; layer++) {
+                        var value = worldMapFile.getJSONArray(x).getJSONArray(y).get(layer);
+                        worldTileMap[x][y][layer] = value == JSONObject.NULL ? null : value.toString();
+                    }
+                }
+            }
+
+            // this is to future proof for more groundcanvases
+            this.groundCanvas0.initialize(0, worldTileMap);
+            this.groundCanvas1.initialize(1, worldTileMap);
+
+        } catch (Exception e) {
+            System.err.println("❌ Error loading world map: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void setupScrollPane(int width, int height) {
@@ -76,7 +123,7 @@ public class GameRenderer extends ScrollPane {
             switch (event.getCode()) {
                 case UP:
                 case DOWN:
-                case LEFT: 
+                case LEFT:
                 case RIGHT:
                     event.consume();
                     break;
@@ -84,7 +131,7 @@ public class GameRenderer extends ScrollPane {
                     break;
             }
         });
-        
+
         // Additional key event handler to ensure arrow keys are blocked
         addEventFilter(javafx.scene.input.KeyEvent.ANY, event -> {
             switch (event.getCode()) {
@@ -103,107 +150,34 @@ public class GameRenderer extends ScrollPane {
         setOnScroll(event -> {
             event.consume();
         });
-        
+
         // Add scroll event filter to catch all scroll events at the capture phase
         addEventFilter(javafx.scene.input.ScrollEvent.ANY, event -> {
             event.consume();
         });
-        
+
         // Disable mouse drag scrolling
         setPannable(false);
-        
+
         // Lock scroll values
         hvalueProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal.doubleValue() != 0.5) {
                 setHvalue(0.5);
             }
         });
-        
+
         vvalueProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal.doubleValue() != 0.5) {
                 setVvalue(0.5);
             }
         });
-        
+
         // Set initial scroll position
         setHvalue(0.5);
         setVvalue(0.5);
-        
+
         // Disable focus traversal to prevent keyboard navigation
         setFocusTraversable(false);
-    }
-
-    public void drawGrid() {
-        gc.setStroke(Color.LIGHTGRAY);
-        gc.setLineWidth(1);
-
-        // Draw vertical lines
-        for (int x = 0; x <= WORLD_WIDTH; x++) {
-            gc.strokeLine(x * TILE_SIZE, 0, x * TILE_SIZE, gridCanvas.getHeight());
-        }
-
-        // Draw horizontal lines
-        for (int y = 0; y <= WORLD_HEIGHT; y++) {
-            gc.strokeLine(0, y * TILE_SIZE, gridCanvas.getWidth(), y * TILE_SIZE);
-        }
-    }
-
-    // TODO: Not for use in production, this is just for generating placeholder map
-    // for testing
-    public void drawGround() {
-        for (int x = 0; x < WORLD_WIDTH; x++) {
-            for (int y = 0; y < WORLD_HEIGHT; y++) {
-                drawTile(x, y, "GRASS_CENTER");
-            }
-        }
-    }
-
-    public void drawTile(int x, int y, String sprite) {
-        String spriteName = sprite.toUpperCase().split("_")[0];
-        Image spriteImage = SpriteLoader.getSprite(sprite);
-        int[] sourceXY = TileVariant.getVariant(sprite);
-
-        switch (spriteName) {
-            case "GRASS" -> {
-                drawImage1x1(gcGround, spriteImage, sourceXY, x, y);
-            }
-            case "WATER" -> {
-                drawImage1x1(gcWater, spriteImage, sourceXY, x, y);
-            }
-            case "SAND" -> {
-                drawImage1x1(gcGround, spriteImage, sourceXY, x, y);
-            }
-            default -> {
-            }
-        }
-    }
-
-    // COPY PASTE THIS TO ANY INDIVIDUAL CANVASES THAT MIGHT NEED IT
-    public void drawImage1x1(GraphicsContext GC, Image spriteImage, int[] sourceXY, int x, int y) {
-        GC.drawImage(
-                spriteImage,
-                sourceXY[0] * TILE_SIZE,
-                sourceXY[1] * TILE_SIZE,
-                TILE_SIZE,
-                TILE_SIZE,
-                x * TILE_SIZE,
-                y * TILE_SIZE,
-                TILE_SIZE,
-                TILE_SIZE);
-    }
-
-    // COPY PASTE THIS TO ANY INDIVIDUAL CANVASES THAT MIGHT NEED IT
-    public void drawImage3x3(GraphicsContext GC, Image spriteImage, int[] sourceXY, int x, int y) {
-        GC.drawImage(
-                spriteImage,
-                sourceXY[0] * TILE_SIZE,
-                sourceXY[1] * TILE_SIZE,
-                TILE_SIZE * 3,
-                TILE_SIZE * 3,
-                x * TILE_SIZE - TILE_SIZE,
-                y * TILE_SIZE - TILE_SIZE,
-                TILE_SIZE * 3,
-                TILE_SIZE * 3);
     }
 
     public PlayerCanvas getPlayerCanvas() {
