@@ -24,7 +24,7 @@ public class Gui extends Application {
     private static final int SCOREBOARD_WIDTH = 180;
     private static final int SCOREBOARD_HEIGHT = 300;
 
-    private final int MOVE_DELAY_MILIS = 500;
+    private final int MOVE_DELAY_MILIS = 100;
     private boolean isMoving = false;
 
     private final GameRenderer gameRenderer = new GameRenderer(WINDOW_WIDTH, WINDOW_HEIGHT);
