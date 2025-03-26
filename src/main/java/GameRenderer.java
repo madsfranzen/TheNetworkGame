@@ -1,5 +1,8 @@
 import java.io.BufferedReader;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -201,6 +204,29 @@ public class GameRenderer extends ScrollPane {
         // Disable focus traversal to prevent keyboard navigation
         setFocusTraversable(false);
     }
+
+    private void smoothScroll(double deltaX, double deltaY) {
+        double startH = getHvalue();
+        double startV = getVvalue();
+
+        double endH = Math.max(0, Math.min(1, startH + (deltaX / 32))); // Ensure within bounds [0,1]
+        double endV = Math.max(0, Math.min(1, startV + (deltaY / 32)));
+
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, event -> {
+                    setHvalue(startH);
+                    setVvalue(startV);
+                }),
+                new KeyFrame(Duration.millis(500), event -> { // 500ms for smooth scrolling
+                    setHvalue(endH);
+                    setVvalue(endV);
+                })
+        );
+
+        timeline.setCycleCount(1);
+        timeline.play();
+    }
+
 
     public PlayerCanvas getPlayerCanvas0() {
         return playerCanvas0;
