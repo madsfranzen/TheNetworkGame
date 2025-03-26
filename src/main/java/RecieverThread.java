@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
 import org.json.JSONArray;
@@ -140,39 +141,29 @@ public class RecieverThread extends Thread {
         }
     }
 
-    private void smoothScroll(int x, int y) {
+    private void smoothScroll(double deltaX, double deltaY) {
+        double maxSteps = 31; // Normalize deltaX and deltaY within 0.0 - 1.0 range
+        double stepSize = 1.0 / maxSteps;
+
         double startH = gameRenderer.getHvalue();
         double startV = gameRenderer.getVvalue();
 
-        double endH = (x / 32.0); // Ensure within bounds [0,1]
-        double endV = (y / 32.0);
+        System.out.println("Hvalue property: " + gameRenderer.vvalueProperty().doubleValue());
+
+        double endH = startH + (deltaX * stepSize);
+        double endV = startV + (deltaY * stepSize);
 
         Timeline timeline = new Timeline(
-                new KeyFrame(Duration.ZERO, e -> {
-                    gameRenderer.setHvalue(startH);
-                    gameRenderer.setVvalue(startV);
-                }),
-                new KeyFrame(Duration.millis(500), e -> {
-                    gameRenderer.setHvalue(gameRenderer.getHvalue() + x/16);
-                    gameRenderer.setVvalue(gameRenderer.getVvalue() + x/16);
-                }));
-
-        /*
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.ZERO, event -> {
-                    gameRenderer.setHvalue(startH);
-                    gameRenderer.setVvalue(startV);
-                }),
-                new KeyFrame(Duration.millis(500), event -> { // 500ms for smooth scrolling
-                    gameRenderer.setHvalue(endH);
-                    gameRenderer.setVvalue(endV);
-                })
+                new KeyFrame(Duration.ZERO, new KeyValue(gameRenderer.hvalueProperty(), startH), new KeyValue(gameRenderer.vvalueProperty(), startV)),
+                new KeyFrame(Duration.millis(500), new KeyValue(gameRenderer.hvalueProperty(), endH), new KeyValue(gameRenderer.vvalueProperty(), endV))
         );
-        */
 
-        timeline.setCycleCount(5);
+        timeline.setCycleCount(1);
         timeline.play();
     }
+
+
+
 
     public void setSpritesLoaded(boolean spritesLoaded) {
         this.spritesLoaded = spritesLoaded;
