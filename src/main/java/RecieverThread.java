@@ -57,6 +57,13 @@ public class RecieverThread extends Thread {
 
             while (true) {
                 messageFromServer = in.readLine();
+
+                if (messageFromServer == "Unknown actions") {
+                    System.out.println("\n === YOU HAVE BEEN KICKED === \n");
+                    // TODO: PHILIP CLOSE GAMEWINDOW AND GO TO MAIN MENU
+                    break;
+                }
+
                 System.out.println("RecieverThread: " + messageFromServer);
                 // Parse JSON received
                 JSONObject jsonObject = new JSONObject(messageFromServer);

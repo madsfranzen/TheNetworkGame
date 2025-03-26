@@ -125,9 +125,13 @@ public class Gui extends Application {
                         System.out.println("Socket closed");
                     } catch (Exception e) {
                         System.out.println(e);
-                        System.out.println("Using deprecated methods to close socket. \n We are aware of this issue and will fix it in the next update.");
+                        System.out.println(
+                                "Using deprecated methods to close socket. \nWe are aware of this issue and will fix it in the next update.");
                     }
                     System.exit(0);
+                case SPACE:
+                    gameRenderer.getPlayerCanvas0().drawHit(10, 10, "BLUE");
+                    break;
                 default:
                     break;
             }
