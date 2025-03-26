@@ -96,6 +96,7 @@ public class RecieverThread extends Thread {
 
                         // nullable player field
                         String player = fieldState.has("player") ? fieldState.getString("player") : null;
+                        String direction = fieldState.has("PlayerDirection") ? fieldState.getString("PlayerDirection") : null;
 
                         System.out.println("Update at (" + x + "," + y + "): " +
                                 "Type=" + contentType +
@@ -103,11 +104,11 @@ public class RecieverThread extends Thread {
 
                         if (player != null) {
                             if (zIndex == 0 && !contentType.equals("STAIRS")) {
-                                UpdateController.playerCanvas0.drawPlayer(x, y, players.get(player), 'r');
+                                UpdateController.playerCanvas0.drawPlayer(x, y, players.get(player), direction);
                                 UpdateController.nameOverlay.drawName(x, y, player);
                             }
                             if (zIndex == 1 || contentType.equals("STAIRS")) {
-                                UpdateController.playerCanvas1.drawPlayer(x, y, players.get(player), 'l');
+                                UpdateController.playerCanvas1.drawPlayer(x, y, players.get(player), direction);
                                 UpdateController.nameOverlay.drawName(x, y, player);
                             }
                         } else {

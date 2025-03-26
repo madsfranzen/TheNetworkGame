@@ -113,21 +113,31 @@ public class PlayerCanvas extends Canvas {
         }
     }
 
-    public void drawPlayerTile(GraphicsContext gc, Image sprite, int[] sourceXY, int x, int y, char direction) {
-        if (direction == 'l') {
-
+    public void drawPlayerTile(GraphicsContext gc, Image sprite, int[] sourceXY, int x, int y, String direction) {
+        System.out.println(direction);
+        if (direction.equals("LEFT")) {
+            gc.drawImage(sprite, sourceXY[0] * TILE_SIZE,
+                    sourceXY[1] * TILE_SIZE,
+                    TILE_SIZE * 3,
+                    TILE_SIZE * 3,
+                    x * TILE_SIZE + TILE_SIZE * 2,
+                    y * TILE_SIZE - TILE_SIZE - TILE_SIZE / 3,
+                    -(TILE_SIZE * 3),
+                    TILE_SIZE * 3);
+        } else {
+            gc.drawImage(sprite, sourceXY[0] * TILE_SIZE,
+                    sourceXY[1] * TILE_SIZE,
+                    TILE_SIZE * 3,
+                    TILE_SIZE * 3,
+                    x * TILE_SIZE - TILE_SIZE,
+                    y * TILE_SIZE - TILE_SIZE - TILE_SIZE / 3,
+                    TILE_SIZE * 3,
+                    TILE_SIZE * 3);
         }
-        gc.drawImage(sprite, sourceXY[0] * TILE_SIZE,
-                sourceXY[1] * TILE_SIZE,
-                TILE_SIZE * 3,
-                TILE_SIZE * 3,
-                x * TILE_SIZE - TILE_SIZE,
-                y * TILE_SIZE - TILE_SIZE - TILE_SIZE / 3,
-                TILE_SIZE * 3,
-                TILE_SIZE * 3);
+
     }
 
-    public void drawPlayer(int x, int y, String faction, char direction) {
+    public void drawPlayer(int x, int y, String faction, String direction) {
         System.out.println("Drawing player at (" + x + ", " + y + ")");
         drawPlayerTile(gcPlayer, SpriteLoader.getSprite("PLAYER_IDLE1_" + faction), new int[] { 0, 0 }, x, y, direction);
         activePlayerPositions.add(new PlayerPosition(x, y, faction, direction));
@@ -167,7 +177,7 @@ public class PlayerCanvas extends Canvas {
         activePlayerPositions.removeIf(pos -> pos.centerX() == x && pos.centerY() == y);
     }
 
-    public void drawHit(int x, int y, String faction, char direction) {
+    public void drawHit(int x, int y, String faction, String direction) {
         activeHitPositions.put(new PlayerPosition(x, y, faction, direction), 0);
     }
 
@@ -175,7 +185,7 @@ public class PlayerCanvas extends Canvas {
         activeHitPositions.keySet().removeIf(pos -> pos.centerX() == x && pos.centerY() == y);
     }
 
-    public record PlayerPosition(int centerX, int centerY, String faction, char direction) {
+    public record PlayerPosition(int centerX, int centerY, String faction, String direction) {
     }
 
     /**

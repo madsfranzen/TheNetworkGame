@@ -129,7 +129,7 @@ public class Gui {
                     }
                     System.exit(0);
                 case SPACE:
-                    gameRenderer.getPlayerCanvas0().drawHit(10, 10, "BLUE", 'r');
+                    gameRenderer.getPlayerCanvas0().drawHit(10, 10, "BLUE", "LEFT");
                     break;
                 default:
                     break;
