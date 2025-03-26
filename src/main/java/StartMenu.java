@@ -1,31 +1,42 @@
+import java.io.DataOutputStream;
+import java.net.Socket;
+
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.HPos;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.io.DataOutputStream;
-import java.net.Socket;
-
 public class StartMenu extends Application {
 
-    BorderPane borderPane;
+    static BorderPane borderPane;
     Scene scene;
     Stage window;
+    private static GridPane pane;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         window = primaryStage;
 
-        GridPane pane = new GridPane();
+        pane = new GridPane();
 
         borderPane = new BorderPane();
         borderPane.setCenter(pane);
@@ -74,7 +85,6 @@ public class StartMenu extends Application {
         txfPort.setText("30000");
         pane.add(txfPort, 0, 5);
 
-
         // ========== Buttons ==========
         HBox btnHBox = new HBox();
 
@@ -88,7 +98,6 @@ public class StartMenu extends Application {
         GridPane.setHalignment(btnConnect, HPos.CENTER);
         btnConnect.setOnAction(event -> connectAction());
 
-
         btnHBox.getChildren().addAll(btnClear, btnConnect);
 
         pane.add(btnHBox, 0, 6, 2, 1);
@@ -96,7 +105,7 @@ public class StartMenu extends Application {
         addSceneEventListener();
     }
 
-    private void setBackgroundImage() {
+    private static void setBackgroundImage() {
         Image backgroundImage = new Image("/assets/UI/Backgrounds/mainBG.png");
 
         BackgroundImage backgroundImg = new BackgroundImage(
@@ -104,16 +113,19 @@ public class StartMenu extends Application {
                 BackgroundRepeat.NO_REPEAT,
                 BackgroundRepeat.NO_REPEAT,
                 BackgroundPosition.CENTER,
-                new BackgroundSize(100, 100, true, true, true, false)
-        );
+                new BackgroundSize(100, 100, true, true, true, false));
 
         borderPane.setBackground(new Background(backgroundImg));
     }
 
     private void addSceneEventListener() {
         scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            switch (event.getCode()) {
-                case ESCAPE -> System.exit(0);
+            if (borderPane.getCenter() == pane) {
+                switch (event.getCode()) {
+                    case ESCAPE:
+                        System.exit(0);
+                        break;
+                }
             }
         });
     }
@@ -165,5 +177,12 @@ public class StartMenu extends Application {
         primaryStage.setHeight(screenBounds.getHeight());
         primaryStage.setFullScreen(false);
         primaryStage.initStyle(StageStyle.UNDECORATED);
+    }
+
+    public static void goToMainMenu() {
+        Platform.runLater(() -> {
+            borderPane.setCenter(pane);
+            setBackgroundImage();
+        });
     }
 }
