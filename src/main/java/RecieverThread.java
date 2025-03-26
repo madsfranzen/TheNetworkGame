@@ -148,6 +148,17 @@ public class RecieverThread extends Thread {
         double endV = (y / 32.0);
 
         Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, e -> {
+                    gameRenderer.setHvalue(startH);
+                    gameRenderer.setVvalue(startV);
+                }),
+                new KeyFrame(Duration.millis(500), e -> {
+                    gameRenderer.setHvalue(gameRenderer.getHvalue() + x/16);
+                    gameRenderer.setVvalue(gameRenderer.getVvalue() + x/16);
+                }));
+
+        /*
+        Timeline timeline = new Timeline(
                 new KeyFrame(Duration.ZERO, event -> {
                     gameRenderer.setHvalue(startH);
                     gameRenderer.setVvalue(startV);
@@ -157,8 +168,9 @@ public class RecieverThread extends Thread {
                     gameRenderer.setVvalue(endV);
                 })
         );
+        */
 
-        timeline.setCycleCount(1);
+        timeline.setCycleCount(5);
         timeline.play();
     }
 
