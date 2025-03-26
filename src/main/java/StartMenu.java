@@ -43,6 +43,8 @@ public class StartMenu extends Application {
 
         scene = new Scene(borderPane);
 
+        
+
         initContent(pane);
 
         setBackgroundImage();
