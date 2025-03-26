@@ -485,11 +485,7 @@ public class PlateauCanvas extends Canvas {
             return BRIDGE_VARIANTS[4]; // VER_CENTER
         if (hasTop && !hasBottom && !hasLeft && !hasRight)
             return BRIDGE_VARIANTS[5]; // VER_BOTTOM
-        // TODO: Remove this hardcoded value and replace with random
-        return BRIDGE_VARIANTS[1];
-        // return BRIDGE_VARIANTS[(int) (Math.random() * 3) + 6]; // Returns BROKEN1,
-        // BROKEN2
-        // or BROKEN3
+        return BRIDGE_VARIANTS[(int) (Math.random() * 3) + 6]; // Returns BROKEN1,
     }
 
     public void bridgeUpdateNeighbors(int x, int y) {

@@ -8,7 +8,7 @@ public class App {
         // Hardware acceleration settings
         System.setProperty("prism.order", "d3d,metal,es2,sw"); // Try hardware acceleration first
         System.setProperty("prism.forceGPU", "true"); // Force GPU usage
-        System.setProperty("prism.maxvram", "4g"); // Increased texture memory
+        System.setProperty("prism.maxvram", "6g"); // Increased texture memory
 
         // Performance optimizations
         System.setProperty("prism.dirtyopts", "false"); // Disable dirty region optimizations
