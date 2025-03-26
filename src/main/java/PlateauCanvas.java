@@ -30,8 +30,6 @@ public class PlateauCanvas extends Canvas {
 
     private void drawWorldMap() {
 
-        System.out.println("Width: " + this.getWidth() + " Height: " + this.getHeight());
-
         for (layer = 0; layer < worldTileMap[0][0].length; layer++) {
             for (int x = 0; x < WORLD_WIDTH; x++) {
                 for (int y = 0; y < WORLD_HEIGHT; y++) {
@@ -56,8 +54,7 @@ public class PlateauCanvas extends Canvas {
     private static record TileVariant(String name, int x, int y) {
     }
 
-    // ================================== WALL
-    // =========================================
+    // ================================== WALL ====================================
 
     private static final TileVariant[] WALL_VARIANTS = {
             new TileVariant("LEFT", 0, 5),
@@ -110,8 +107,7 @@ public class PlateauCanvas extends Canvas {
             drawWall(x, y + 1, false, layer);
     }
 
-    // ================================== PLATEAU
-    // =========================================
+    // ================================== PLATEAU ==================================
 
     private static final TileVariant[] PLATEAU_VARIANTS = {
             new TileVariant("TOP_LEFT", 0, 0),
@@ -199,8 +195,7 @@ public class PlateauCanvas extends Canvas {
             return PLATEAU_VARIANTS[15]; // SOLO
     }
 
-    // ================================== STAIRS
-    // =========================================
+    // ================================== STAIRS ==================================
 
     private static final TileVariant[] STAIRS_VARIANTS = {
             new TileVariant("LEFT", 0, 7),
@@ -238,7 +233,7 @@ public class PlateauCanvas extends Canvas {
         return STAIRS_VARIANTS[3]; // SOLO
     }
 
-    // =================================== GRASS
+    // =================================== GRASS ===================================
 
     protected TileVariant grassDetermineVariant(int x, int y) {
 
@@ -331,7 +326,7 @@ public class PlateauCanvas extends Canvas {
             drawGrass(x, y + 1, false);
     }
 
-    // ================================== SAND
+    // ================================== SAND ==================================
 
     protected TileVariant sandDetermineVariant(int x, int y) {
 
@@ -424,7 +419,7 @@ public class PlateauCanvas extends Canvas {
             drawSand(x, y + 1, false);
     }
 
-    // ================================== BRIDGE
+    // ================================== BRIDGE ==================================
 
     private static final TileVariant[] BRIDGE_VARIANTS = {
             new TileVariant("HOR_LEFT", 0, 0),
@@ -512,7 +507,7 @@ public class PlateauCanvas extends Canvas {
         }
     }
 
-    // ================================== BRIDGE SHADOW
+    // ================================== BRIDGE SHADOW ==================================
 
     public void drawBridgeShadow(int x, int y) {
         gc.drawImage(SpriteLoader.getBridgeTileset(), 2 * TILE_SIZE, 3 * TILE_SIZE, TILE_SIZE, TILE_SIZE, x * TILE_SIZE,
@@ -531,7 +526,7 @@ public class PlateauCanvas extends Canvas {
                 y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
     }
 
-    // ======================== SHADOWS
+    // ================================ SHADOWS =================================
 
     public void drawShadow(int x, int y) {
         gc.drawImage(SpriteLoader.getShadowsImage(),

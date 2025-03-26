@@ -40,8 +40,6 @@ public class WaterCanvas extends Canvas {
 
     private void drawWorldMap() {
 
-        System.out.println("Width: " + this.getWidth() + " Height: " + this.getHeight());
-
         for (int layer = 0; layer < worldTileMap[0][0].length; layer++) {
             for (int x = 0; x < WORLD_WIDTH; x++) {
                 for (int y = 0; y < WORLD_HEIGHT; y++) {

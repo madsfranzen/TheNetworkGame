@@ -6,6 +6,11 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.PixelReader;
+import javafx.scene.paint.Color;
+import javafx.scene.effect.BlendMode;
 
 public class PlayerCanvas extends Canvas {
 
@@ -23,6 +28,16 @@ public class PlayerCanvas extends Canvas {
     private int currentFrame;
     private long lastFrameTime;
 
+    private Image playerSprite;
+    private int[] sourceXY;
+    private WritableImage maskImage;
+    private PixelWriter maskWriter;
+    private PixelReader spriteReader;
+    
+
+
+
+
     /**
      * @param width       The width of the canvas (pixels)
      * @param height      The height of the canvas (pixels)
@@ -38,6 +53,15 @@ public class PlayerCanvas extends Canvas {
         this.activePlayerPositions = Collections.synchronizedSet(new HashSet<>());
         this.animator = createAnimator();
         this.animator.start();
+
+        // Initialize mask-related field
+        this.playerSprite = SpriteLoader.getSprite("PLAYER_IDLE1_BLUE");
+        this.sourceXY = TileVariant.getVariant("PLAYER_IDLE1");
+        this.maskImage = new WritableImage((int)(TILE_SIZE * 3), (int)(TILE_SIZE * 3));
+        this.maskWriter = maskImage.getPixelWriter();
+        this.spriteReader = playerSprite.getPixelReader();
+        
+
     }
 
     private AnimationTimer createAnimator() {
@@ -74,23 +98,50 @@ public class PlayerCanvas extends Canvas {
                 TILE_SIZE * 3,
                 TILE_SIZE * 3,
                 x * TILE_SIZE - TILE_SIZE,
-                y * TILE_SIZE - TILE_SIZE - TILE_SIZE/3,
+                y * TILE_SIZE - TILE_SIZE - TILE_SIZE / 3,
                 TILE_SIZE * 3,
                 TILE_SIZE * 3);
     }
 
     public void drawPlayer(int x, int y, String faction) {
         System.out.println("Drawing player at (" + x + ", " + y + ")");
+        drawPlayerTile(gcPlayer, SpriteLoader.getSprite("PLAYER_IDLE1_" + faction), new int[] { 0, 0 }, x, y);
         activePlayerPositions.add(new PlayerPosition(x, y, faction));
-        this.animator.start();
     }
 
     public void removePlayer(int x, int y) {
         System.out.println("Removing player at (" + x + ", " + y + ")");
 
+        // Create a mask sprite t        // Create the mask by checking alpha values
+        for (int py = 0; py < TILE_SIZE * 3; py++) {
+            for (int px = 0; px < TILE_SIZE * 3; px++) {
+                int spriteX = sourceXY[0] * TILE_SIZE + px;
+                int spriteY = sourceXY[1] * TILE_SIZE + py;
+                
+                if (spriteX < playerSprite.getWidth() && spriteY < playerSprite.getHeight()) {
+                    Color color = spriteReader.getColor(spriteX, spriteY);
+                    if (color.getOpacity() > 0) {
+                        maskWriter.setColor(px, py, Color.TRANSPARENT);
+                    }
+                }
+            }
+        }
+        
+        // Clear only the masked area
+        gcPlayer.clearRect(x * TILE_SIZE - TILE_SIZE,
+                y * TILE_SIZE - TILE_SIZE - TILE_SIZE / 3,
+                TILE_SIZE * 3,
+                TILE_SIZE * 3);
+        
+        // Draw the mask to clear only the player's shape
+        gcPlayer.drawImage(maskImage,
+            x * TILE_SIZE - TILE_SIZE,
+            y * TILE_SIZE - TILE_SIZE - TILE_SIZE / 3,
+            TILE_SIZE * 3,
+            TILE_SIZE * 3);
+
         activePlayerPositions.removeIf(pos -> pos.centerX() == x && pos.centerY() == y);
     }
-
 
     public record PlayerPosition(int centerX, int centerY, String faction) {
     }
@@ -103,5 +154,4 @@ public class PlayerCanvas extends Canvas {
         animator.stop();
         activePlayerPositions.clear();
     }
-
 }
