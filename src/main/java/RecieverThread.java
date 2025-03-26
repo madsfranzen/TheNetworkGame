@@ -55,74 +55,76 @@ public class RecieverThread extends Thread {
             String welcomeMessage = in.readLine();
             System.out.println(welcomeMessage);
 
-            while (true) {
+            while (running) {
                 messageFromServer = in.readLine();
 
-                if (messageFromServer == "Unknown actions") {
+                if (messageFromServer.equals("EXIT")) {
                     System.out.println("\n === YOU HAVE BEEN KICKED === \n");
-                    // TODO: PHILIP CLOSE GAMEWINDOW AND GO TO MAIN MENU
+                    running = false;
+                    StartMenu.clientSocket.close();
+                    StartMenu.goToMainMenu();
                     break;
-                }
+                } else {
 
-                System.out.println("RecieverThread: " + messageFromServer);
-                // Parse JSON received
-                JSONObject jsonObject = new JSONObject(messageFromServer);
+                    System.out.println("RecieverThread: " + messageFromServer);
+                    // Parse JSON received
+                    JSONObject jsonObject = new JSONObject(messageFromServer);
 
-                // Parse scoreBoard
-                if (jsonObject.has("scoreBoard")) {
-                    JSONObject scoreBoard = jsonObject.getJSONObject("scoreBoard");
-                    UpdateController.scoreBoard.updateScoreBoard(scoreBoard, players);
-                    JSONArray playersConnected = scoreBoard.getJSONArray("players");
-                    for (int i = 0; i < playersConnected.length(); i++) {
-                        JSONObject player = playersConnected.getJSONObject(i);
-                        players.put(player.getString("playerName"), playerColors.get(i % playerColors.size()));
+                    // Parse gameState
+                    if (jsonObject.has("gameState")) {
+                        JSONObject gameState = jsonObject.getJSONObject("gameState");
+                        JSONArray updatePackages = gameState.getJSONArray("updatePackages");
+
+                        for (int i = 0; i < updatePackages.length(); i++) {
+                            JSONObject update = updatePackages.getJSONObject(i);
+                            JSONObject pair = update.getJSONObject("pair");
+                            int x = pair.getInt("x");
+                            int y = pair.getInt("y");
+
+                            JSONObject fieldState = update.getJSONObject("fieldState");
+                            String contentType = fieldState.getString("contentType");
+                            int zIndex = fieldState.getInt("zIndex");
+
+                            // nullable player field
+                            String player = fieldState.has("player") ? fieldState.getString("player") : null;
+
+                            System.out.println("Update at (" + x + "," + y + "): " +
+                                    "Type=" + contentType +
+                                    (player != null ? ", Player=" + player : ""));
+
+                            if (player != null) {
+                                if (zIndex == 0 && !contentType.equals("STAIRS")) {
+                                    UpdateController.playerCanvas0.drawPlayer(x, y, players.get(player), 'r');
+                                    UpdateController.nameOverlay.drawName(x, y, player);
+                                }
+                                if (zIndex == 1 || contentType.equals("STAIRS")) {
+                                    UpdateController.playerCanvas1.drawPlayer(x, y, players.get(player), 'l');
+                                    UpdateController.nameOverlay.drawName(x, y, player);
+                                }
+                            } else {
+                                UpdateController.playerCanvas0.removePlayer(x, y);
+                                UpdateController.playerCanvas1.removePlayer(x, y);
+                                UpdateController.nameOverlay.removeName(x, y);
+                            }
+                        }
                     }
-                }
 
-                // Parse gameState
-                if (jsonObject.has("gameState")) {
-                    JSONObject gameState = jsonObject.getJSONObject("gameState");
-                    JSONArray updatePackages = gameState.getJSONArray("updatePackages");
-
-                    for (int i = 0; i < updatePackages.length(); i++) {
-                        JSONObject update = updatePackages.getJSONObject(i);
-                        JSONObject pair = update.getJSONObject("pair");
-                        int x = pair.getInt("x");
-                        int y = pair.getInt("y");
-
-                        JSONObject fieldState = update.getJSONObject("fieldState");
-                        String contentType = fieldState.getString("contentType");
-                        int zIndex = fieldState.getInt("zIndex");
-
-                        // nullable player field
-                        String player = fieldState.has("player") ? fieldState.getString("player") : null;
-
-                        System.out.println("Update at (" + x + "," + y + "): " +
-                                "Type=" + contentType +
-                                (player != null ? ", Player=" + player : ""));
-
-                        if (player != null) {
-                            if (zIndex == 0 && !contentType.equals("STAIRS")) {
-                                UpdateController.playerCanvas0.drawPlayer(x, y, players.get(player), 'r');
-                                UpdateController.nameOverlay.drawName(x, y, player);
-                            }
-                            if (zIndex == 1 || contentType.equals("STAIRS")) {
-                                UpdateController.playerCanvas1.drawPlayer(x, y, players.get(player), 'l');
-                                UpdateController.nameOverlay.drawName(x, y, player);
-                            }
-                        } else {
-                            UpdateController.playerCanvas0.removePlayer(x, y);
-                            UpdateController.playerCanvas1.removePlayer(x, y);
-                            UpdateController.nameOverlay.removeName(x, y);
+                    // Parse scoreBoard
+                    if (jsonObject.has("scoreBoard")) {
+                        JSONObject scoreBoard = jsonObject.getJSONObject("scoreBoard");
+                        UpdateController.scoreBoard.updateScoreBoard(scoreBoard, players);
+                        JSONArray playersConnected = scoreBoard.getJSONArray("players");
+                        for (int i = 0; i < playersConnected.length(); i++) {
+                            JSONObject player = playersConnected.getJSONObject(i);
+                            players.put(player.getString("playerName"), playerColors.get(i % playerColors.size()));
                         }
                     }
                 }
             }
+
         } catch (IOException e) {
-            System.out.println("RecieverThread error: " + e.getMessage());
             e.printStackTrace();
         }
-        System.out.println("RecieverThread closed");
     }
 
     public void setSpritesLoaded(boolean spritesLoaded) {
@@ -134,5 +136,4 @@ public class RecieverThread extends Thread {
         System.out.println("RECIEVERTHREAD: GUI loaded");
         this.GUIloaded = GUIloaded;
     }
-
 }

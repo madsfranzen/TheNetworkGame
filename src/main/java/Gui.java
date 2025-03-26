@@ -2,7 +2,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import javafx.animation.PauseTransition;
-import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -12,8 +11,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 public class Gui {
@@ -24,13 +21,12 @@ public class Gui {
     private static final int SCOREBOARD_WIDTH = 180;
     private static final int SCOREBOARD_HEIGHT = 300;
 
-    private final int MOVE_DELAY_MILIS = 100;
+    private final int MOVE_DELAY_MILIS = 50;
     private boolean isMoving = false;
 
     private final GameRenderer gameRenderer = new GameRenderer(WINDOW_WIDTH, WINDOW_HEIGHT);
     public static final ScoreBoard scoreBoard = new ScoreBoard(SCOREBOARD_WIDTH, SCOREBOARD_HEIGHT);
     private static DataOutputStream outToServer = null;
-    private final NameOverlay nameOverlay = new NameOverlay(WINDOW_WIDTH, WINDOW_HEIGHT);
 
     public void start(BorderPane root, Scene scene) throws Exception {
         // Create a StackPane to overlay the ScoreBoard on top of GameRenderer
@@ -38,7 +34,6 @@ public class Gui {
 
         // Add GameRenderer as the base layer
         mainPane.getChildren().add(gameRenderer);
-        mainPane.getChildren().add(nameOverlay);
 
         // Style the ScoreBoard to make it visible
         scoreBoard.setStyle("-fx-background-color: rgba(0,0,0,0.5); -fx-border-color: white; -fx-border-width: 1;");
@@ -57,30 +52,29 @@ public class Gui {
         mainPane.setPrefSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
         // Create the root layout and add the main pane
-        //BorderPane root = new BorderPane();
+        // BorderPane root = new BorderPane();
         root.setCenter(mainPane);
 
         root.setStyle("-fx-background-color: #f0f0f0;");
 
-        //Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        // Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
 
         // Set background color for the scene
-        //scene.setFill(javafx.scene.paint.Color.LIGHTGRAY);
+        // scene.setFill(javafx.scene.paint.Color.LIGHTGRAY);
 
-        //primaryStage.setScene(scene);
-        //primaryStage.setResizable(false);
-        //primaryStage.setTitle("THE NETWORK GAME CLIENT");
+        // primaryStage.setScene(scene);
+        // primaryStage.setResizable(false);
+        // primaryStage.setTitle("THE NETWORK GAME CLIENT");
 
-        //toggleWindowedFullscreen(primaryStage);
+        // toggleWindowedFullscreen(primaryStage);
 
         UpdateController.setGameRenderer(gameRenderer);
         UpdateController.setPlayerCanvas0(gameRenderer.getPlayerCanvas0());
         UpdateController.setPlayerCanvas1(gameRenderer.getPlayerCanvas1());
         UpdateController.setScoreBoard(scoreBoard);
-        UpdateController.setNameOverlay(nameOverlay);
 
-        //primaryStage.show();
-        //primaryStage.requestFocus();
+        // primaryStage.show();
+        // primaryStage.requestFocus();
 
         setDataOutputStream();
 
@@ -116,18 +110,13 @@ public class Gui {
                     }
                     break;
                 case ESCAPE:
-                    System.out.println("Closing application...\n");
                     try {
-                        StartMenu.recieverThread.stop();
-                        System.out.println("RecieverThread closed");
-                        StartMenu.clientSocket.close();
-                        System.out.println("Socket closed");
-                    } catch (Exception e) {
-                        System.out.println(e);
-                        System.out.println(
-                                "Using deprecated methods to close socket. \nWe are aware of this issue and will fix it in the next update.");
+                        System.out.println("Closing application...\n");
+                        outToServer.writeBytes("EXIT\n");
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                    System.exit(0);
+                    break;
                 case SPACE:
                     gameRenderer.getPlayerCanvas0().drawHit(10, 10, "BLUE", 'r');
                     break;
@@ -140,6 +129,5 @@ public class Gui {
     public static void setDataOutputStream() {
         outToServer = StartMenu.outToServer;
     }
-
 
 }
