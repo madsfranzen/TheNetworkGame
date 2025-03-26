@@ -16,15 +16,15 @@ import javafx.util.Duration;
 public class Gui {
 
     private final Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-    private final int WINDOW_WIDTH = 1920;
-    private final int WINDOW_HEIGHT = 1080;
+    private static final int WINDOW_WIDTH = 1920;
+    private static final int WINDOW_HEIGHT = 1080;
     private static final int SCOREBOARD_WIDTH = 180;
     private static final int SCOREBOARD_HEIGHT = 300;
 
     private final int MOVE_DELAY_MILIS = 50;
     private boolean isMoving = false;
 
-    private final GameRenderer gameRenderer = new GameRenderer(WINDOW_WIDTH, WINDOW_HEIGHT);
+    public static final GameRenderer gameRenderer = new GameRenderer(WINDOW_WIDTH, WINDOW_HEIGHT);
     public static final ScoreBoard scoreBoard = new ScoreBoard(SCOREBOARD_WIDTH, SCOREBOARD_HEIGHT);
     private static DataOutputStream outToServer = null;
 
@@ -128,6 +128,10 @@ public class Gui {
 
     public static void setDataOutputStream() {
         outToServer = StartMenu.outToServer;
+    }
+
+    public static GameRenderer getGameRenderer() {
+        return gameRenderer;
     }
 
 }

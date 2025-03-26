@@ -149,6 +149,7 @@ public class StartMenu extends Application {
         try {
             clientSocket = new Socket(ip, port);
             outToServer = new DataOutputStream(clientSocket.getOutputStream());
+
             recieverThread = new RecieverThread(clientSocket);
 
             SpriteLoader.loadSprites(recieverThread);
@@ -158,7 +159,6 @@ public class StartMenu extends Application {
 
             Gui gui = new Gui();
             gui.start(borderPane, scene);
-
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setHeaderText("Connecton failed!");

@@ -5,6 +5,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -15,6 +18,8 @@ public class RecieverThread extends Thread {
 
     private HashMap<String, String> players = new HashMap<>();
     private ArrayList<String> playerColors = new ArrayList<>();
+
+    private GameRenderer gameRenderer;
 
     private boolean running = true;
 
@@ -32,6 +37,7 @@ public class RecieverThread extends Thread {
     }
 
     public void run() {
+        gameRenderer = Gui.getGameRenderer();
         String messageFromServer;
         System.out.println("RecieverThread started (LOADING)");
 
@@ -87,13 +93,16 @@ public class RecieverThread extends Thread {
 
                             // nullable player field
                             String player = fieldState.has("player") ? fieldState.getString("player") : null;
-                        String direction = fieldState.has("PlayerDirection") ? fieldState.getString("PlayerDirection") : null;
+                            String direction = fieldState.has("PlayerDirection") ? fieldState.getString("PlayerDirection") : null;
 
                             System.out.println("Update at (" + x + "," + y + "): " +
                                     "Type=" + contentType +
                                     (player != null ? ", Player=" + player : ""));
 
                             if (player != null) {
+                                if (player.equals(App.username)) {
+                                    //smoothScroll(x, y);
+                                }
                                 if (zIndex == 0 && !contentType.equals("STAIRS")) {
                                     UpdateController.playerCanvas0.drawPlayer(x, y, players.get(player), direction);
                                     UpdateController.nameOverlay.drawName(x, y, player);
@@ -126,6 +135,28 @@ public class RecieverThread extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void smoothScroll(int x, int y) {
+        double startH = gameRenderer.getHvalue();
+        double startV = gameRenderer.getVvalue();
+
+        double endH = (x / 32.0); // Ensure within bounds [0,1]
+        double endV = (y / 32.0);
+
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, event -> {
+                    gameRenderer.setHvalue(startH);
+                    gameRenderer.setVvalue(startV);
+                }),
+                new KeyFrame(Duration.millis(500), event -> { // 500ms for smooth scrolling
+                    gameRenderer.setHvalue(endH);
+                    gameRenderer.setVvalue(endV);
+                })
+        );
+
+        timeline.setCycleCount(1);
+        timeline.play();
     }
 
     public void setSpritesLoaded(boolean spritesLoaded) {
