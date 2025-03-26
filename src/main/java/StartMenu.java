@@ -125,15 +125,14 @@ public class StartMenu extends Application {
     }
 
     public static DataOutputStream outToServer = null;
+    public static RecieverThread recieverThread;
+    public static Socket clientSocket;
 
     private void connectAction() {
         // MAIN THREAD
         String name = txfNavn.getText().trim();
         String ip = txfIp.getText().trim();
         int port = Integer.parseInt(txfPort.getText().trim());
-
-        Socket clientSocket;
-        RecieverThread recieverThread;
 
         try {
             clientSocket = new Socket(ip, port);

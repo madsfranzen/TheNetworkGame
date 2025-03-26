@@ -118,9 +118,9 @@ public class Gui {
                 case ESCAPE:
                     System.out.println("Closing application...\n");
                     try {
-                        App.recieverThread.stop();
+                        StartMenu.recieverThread.stop();
                         System.out.println("RecieverThread closed");
-                        App.clientSocket.close();
+                        StartMenu.clientSocket.close();
                         System.out.println("Socket closed");
                     } catch (Exception e) {
                         System.out.println(e);
@@ -129,7 +129,7 @@ public class Gui {
                     }
                     System.exit(0);
                 case SPACE:
-                    gameRenderer.getPlayerCanvas0().drawHit(10, 10, "BLUE");
+                    gameRenderer.getPlayerCanvas0().drawHit(10, 10, "BLUE", 'r');
                     break;
                 default:
                     break;

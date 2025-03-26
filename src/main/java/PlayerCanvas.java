@@ -90,7 +90,8 @@ public class PlayerCanvas extends Canvas {
             for (PlayerPosition pos : activePlayerPositions) {
                 drawPlayerTile(gcPlayer, SpriteLoader.getSprite(idleSprite + "_" + pos.faction()), sourceXY,
                         pos.centerX(),
-                        pos.centerY());
+                        pos.centerY(),
+                        pos.direction());
             }
         }
 
@@ -103,7 +104,8 @@ public class PlayerCanvas extends Canvas {
                 activeHitPositions.put(pos, hitFrame + 1);
                 drawPlayerTile(gcPlayer, SpriteLoader.getSprite(idleSprite + "_" + pos.faction()), hitSourceXY,
                         pos.centerX(),
-                        pos.centerY());
+                        pos.centerY(),
+                        pos.direction());
                 if (hitFrame >= 6) {
                     activeHitPositions.remove(pos);
                 }
@@ -111,7 +113,10 @@ public class PlayerCanvas extends Canvas {
         }
     }
 
-    public void drawPlayerTile(GraphicsContext gc, Image sprite, int[] sourceXY, int x, int y) {
+    public void drawPlayerTile(GraphicsContext gc, Image sprite, int[] sourceXY, int x, int y, char direction) {
+        if (direction == 'l') {
+
+        }
         gc.drawImage(sprite, sourceXY[0] * TILE_SIZE,
                 sourceXY[1] * TILE_SIZE,
                 TILE_SIZE * 3,
@@ -122,10 +127,10 @@ public class PlayerCanvas extends Canvas {
                 TILE_SIZE * 3);
     }
 
-    public void drawPlayer(int x, int y, String faction) {
+    public void drawPlayer(int x, int y, String faction, char direction) {
         System.out.println("Drawing player at (" + x + ", " + y + ")");
-        drawPlayerTile(gcPlayer, SpriteLoader.getSprite("PLAYER_IDLE1_" + faction), new int[] { 0, 0 }, x, y);
-        activePlayerPositions.add(new PlayerPosition(x, y, faction));
+        drawPlayerTile(gcPlayer, SpriteLoader.getSprite("PLAYER_IDLE1_" + faction), new int[] { 0, 0 }, x, y, direction);
+        activePlayerPositions.add(new PlayerPosition(x, y, faction, direction));
     }
 
     public void removePlayer(int x, int y) {
@@ -162,15 +167,15 @@ public class PlayerCanvas extends Canvas {
         activePlayerPositions.removeIf(pos -> pos.centerX() == x && pos.centerY() == y);
     }
 
-    public void drawHit(int x, int y, String faction) {
-        activeHitPositions.put(new PlayerPosition(x, y, faction), 0);
+    public void drawHit(int x, int y, String faction, char direction) {
+        activeHitPositions.put(new PlayerPosition(x, y, faction, direction), 0);
     }
 
     public void removeHit(int x, int y) {
         activeHitPositions.keySet().removeIf(pos -> pos.centerX() == x && pos.centerY() == y);
     }
 
-    public record PlayerPosition(int centerX, int centerY, String faction) {
+    public record PlayerPosition(int centerX, int centerY, String faction, char direction) {
     }
 
     /**
