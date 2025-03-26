@@ -97,13 +97,17 @@ public class Gui extends Application {
                 case RIGHT:
                     try {
                         isMoving = true;
-                        String action = event.getCode() == KeyCode.UP ? Action.MOVEUP.toString() :
-                                       event.getCode() == KeyCode.DOWN ? Action.MOVEDOWN.toString() :
-                                       event.getCode() == KeyCode.LEFT ? Action.MOVELEFT.toString() :
-                                       Action.MOVERIGHT.toString();
-                        outToServer.writeBytes(action + "\n");
-                        System.out.println(action);
-                        
+                        String action = event.getCode() == KeyCode.UP ? Action.MOVEUP.toString()
+                                : event.getCode() == KeyCode.DOWN ? Action.MOVEDOWN.toString()
+                                        : event.getCode() == KeyCode.LEFT ? Action.MOVELEFT.toString()
+                                                : Action.MOVERIGHT.toString();
+                        if (action != null) {
+                            outToServer.writeBytes(action + "\n");
+                            System.out.println(action);
+                        } else {
+                            System.out.println("\n !!! ACTION IS NULL !!! \n");
+                        }
+
                         PauseTransition pause = new PauseTransition(Duration.millis(MOVE_DELAY_MILIS));
                         pause.setOnFinished(e -> isMoving = false);
                         pause.play();
@@ -113,6 +117,16 @@ public class Gui extends Application {
                     }
                     break;
                 case ESCAPE:
+                    System.out.println("Closing application...\n");
+                    try {
+                        App.recieverThread.stop();
+                        System.out.println("RecieverThread closed");
+                        App.clientSocket.close();
+                        System.out.println("Socket closed");
+                    } catch (Exception e) {
+                        System.out.println(e);
+                        System.out.println("Using deprecated methods to close socket. \n We are aware of this issue and will fix it in the next update.");
+                    }
                     System.exit(0);
                 default:
                     break;

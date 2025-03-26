@@ -51,8 +51,6 @@ public class GroundCanvas extends Canvas {
             return;
         }
 
-        System.out.println("Width: " + this.getWidth() + " Height: " + this.getHeight());
-
         // Clear the canvas first
         gc.clearRect(0, 0, getWidth(), getHeight());
 

@@ -16,6 +16,8 @@ public class RecieverThread extends Thread {
     private HashMap<String, String> players = new HashMap<>();
     private ArrayList<String> playerColors = new ArrayList<>();
 
+    private boolean running = true;
+
     public RecieverThread(Socket socket) {
         try {
             this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -113,6 +115,7 @@ public class RecieverThread extends Thread {
             System.out.println("RecieverThread error: " + e.getMessage());
             e.printStackTrace();
         }
+        System.out.println("RecieverThread closed");
     }
 
     public void setSpritesLoaded(boolean spritesLoaded) {
@@ -124,4 +127,5 @@ public class RecieverThread extends Thread {
         System.out.println("RECIEVERTHREAD: GUI loaded");
         this.GUIloaded = GUIloaded;
     }
+
 }

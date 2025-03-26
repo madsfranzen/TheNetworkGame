@@ -5,14 +5,14 @@ import javafx.application.Application;
 
 public class App {
 
+    public static Socket clientSocket = null;
     public static DataOutputStream outToServer = null;
+    public static RecieverThread recieverThread;
 
     public static void main(String[] args) {
 
         // MAIN THREAD
         String name = "Jensemanden";
-        Socket clientSocket;
-        RecieverThread recieverThread;
 
         try {
             clientSocket = new Socket("95.138.218.31", 30000);
