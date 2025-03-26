@@ -16,8 +16,8 @@ import javafx.util.Duration;
 public class Gui {
 
     private final Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-    private final int WINDOW_WIDTH = (int) screenBounds.getWidth();
-    private final int WINDOW_HEIGHT = (int) screenBounds.getHeight();
+    private final int WINDOW_WIDTH = 1920;
+    private final int WINDOW_HEIGHT = 1080;
     private static final int SCOREBOARD_WIDTH = 180;
     private static final int SCOREBOARD_HEIGHT = 300;
 

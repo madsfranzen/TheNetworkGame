@@ -17,7 +17,7 @@ public class GameRenderer extends ScrollPane {
     private String[][][] worldTileMap;
 
     private final Canvas gridCanvas = new Canvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE);
-    private NameOverlay nameOverlay = new NameOverlay(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE);
+    private final NameOverlay nameOverlay = new NameOverlay(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE);
 
     private final WaterCanvas waterCanvas = new WaterCanvas(WORLD_WIDTH, WORLD_HEIGHT);
     private final GroundCanvas groundCanvas0 = new GroundCanvas(WORLD_WIDTH, WORLD_HEIGHT, 0);
@@ -40,15 +40,13 @@ public class GameRenderer extends ScrollPane {
 
         // Setup canvas container
         canvasContainer = new StackPane();
-
-        nameOverlay = new NameOverlay(width, height);
-
         canvasContainer.setStyle("-fx-background-color: rgb(99, 165, 164);"); // Using CSS for background color 😎
 
         gridCanvas.setMouseTransparent(true);
         canvasContainer.getChildren().add(gridCanvas);
-        canvasContainer.getChildren().add(nameOverlay);
         nameOverlay.setMouseTransparent(true);
+
+        UpdateController.setNameOverlay(nameOverlay);
 
         waterCanvas.setMouseTransparent(true);
         groundCanvas0.setMouseTransparent(true);
@@ -63,10 +61,8 @@ public class GameRenderer extends ScrollPane {
         canvasContainer.getChildren().add(groundCanvas0);
         canvasContainer.getChildren().add(playerCanvas0);
         canvasContainer.getChildren().add(plateauCanvas0);
-        // canvasContainer.getChildren().add(groundCanvas1);
         canvasContainer.getChildren().add(playerCanvas1);
-        // canvasContainer.getChildren().add(plateauCanvas1);
-        // canvasContainer.getChildren().add(groundCanvas2);
+        canvasContainer.getChildren().add(nameOverlay);
         setupScrollPane(width, height);
 
         // Add the canvas container to the scroll pane
