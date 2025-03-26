@@ -16,7 +16,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
-public class Gui extends Application {
+public class Gui {
 
     private final Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
     private final int WINDOW_WIDTH = (int) screenBounds.getWidth();
@@ -32,8 +32,7 @@ public class Gui extends Application {
     private static DataOutputStream outToServer = null;
     private final NameOverlay nameOverlay = new NameOverlay(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(BorderPane root, Scene scene) throws Exception {
         // Create a StackPane to overlay the ScoreBoard on top of GameRenderer
         StackPane mainPane = new StackPane();
 
@@ -58,21 +57,21 @@ public class Gui extends Application {
         mainPane.setPrefSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
         // Create the root layout and add the main pane
-        BorderPane root = new BorderPane();
+        //BorderPane root = new BorderPane();
         root.setCenter(mainPane);
 
         root.setStyle("-fx-background-color: #f0f0f0;");
 
-        Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        //Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
 
         // Set background color for the scene
-        scene.setFill(javafx.scene.paint.Color.LIGHTGRAY);
+        //scene.setFill(javafx.scene.paint.Color.LIGHTGRAY);
 
-        primaryStage.setScene(scene);
-        primaryStage.setResizable(false);
-        primaryStage.setTitle("THE NETWORK GAME CLIENT");
+        //primaryStage.setScene(scene);
+        //primaryStage.setResizable(false);
+        //primaryStage.setTitle("THE NETWORK GAME CLIENT");
 
-        toggleWindowedFullscreen(primaryStage);
+        //toggleWindowedFullscreen(primaryStage);
 
         UpdateController.setGameRenderer(gameRenderer);
         UpdateController.setPlayerCanvas0(gameRenderer.getPlayerCanvas0());
@@ -80,8 +79,8 @@ public class Gui extends Application {
         UpdateController.setScoreBoard(scoreBoard);
         UpdateController.setNameOverlay(nameOverlay);
 
-        primaryStage.show();
-        primaryStage.requestFocus();
+        //primaryStage.show();
+        //primaryStage.requestFocus();
 
         setDataOutputStream();
 
@@ -121,15 +120,8 @@ public class Gui extends Application {
     }
 
     public static void setDataOutputStream() {
-        outToServer = App.outToServer;
+        outToServer = StartMenu.outToServer;
     }
 
-    private void toggleWindowedFullscreen(Stage primaryStage) {
-        primaryStage.setX(screenBounds.getMinX());
-        primaryStage.setY(screenBounds.getMinY());
-        primaryStage.setWidth(screenBounds.getWidth());
-        primaryStage.setHeight(screenBounds.getHeight());
-        primaryStage.setFullScreen(false);
-        primaryStage.initStyle(StageStyle.UNDECORATED);
-    }
+
 }
