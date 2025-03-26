@@ -100,8 +100,11 @@ public class RecieverThread extends Thread {
                                     (player != null ? ", Player=" + player : ""));
 
                             if (player != null) {
+                                System.out.println("Player: " + player);
+                                System.out.println("Username: " + App.username);
                                 if (player.equals(App.username)) {
-                                    //smoothScroll(x, y);
+                                    System.out.println("Username");
+                                    smoothScroll(x, y);
                                 }
                                 if (zIndex == 0 && !contentType.equals("STAIRS")) {
                                     UpdateController.playerCanvas0.drawPlayer(x, y, players.get(player), direction);

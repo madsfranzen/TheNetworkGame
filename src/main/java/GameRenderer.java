@@ -181,29 +181,6 @@ public class GameRenderer extends ScrollPane {
         this.setVvalue(y / 31.0);
     }
 
-    private void smoothScroll(double deltaX, double deltaY) {
-        double startH = getHvalue();
-        double startV = getVvalue();
-
-        double endH = Math.max(0, Math.min(1, startH + (deltaX / 32))); // Ensure within bounds [0,1]
-        double endV = Math.max(0, Math.min(1, startV + (deltaY / 32)));
-
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.ZERO, event -> {
-                    setHvalue(startH);
-                    setVvalue(startV);
-                }),
-                new KeyFrame(Duration.millis(500), event -> { // 500ms for smooth scrolling
-                    setHvalue(endH);
-                    setVvalue(endV);
-                })
-        );
-
-        timeline.setCycleCount(1);
-        timeline.play();
-    }
-
-
     public PlayerCanvas getPlayerCanvas0() {
         return playerCanvas0;
     }

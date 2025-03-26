@@ -114,7 +114,7 @@ public class PlayerCanvas extends Canvas {
     }
 
     public void drawPlayerTile(GraphicsContext gc, Image sprite, int[] sourceXY, int x, int y, String direction) {
-        System.out.println(direction);
+        //System.out.println(direction);
         if (direction.equals("LEFT")) {
             gc.drawImage(sprite, sourceXY[0] * TILE_SIZE,
                     sourceXY[1] * TILE_SIZE,

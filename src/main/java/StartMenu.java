@@ -157,6 +157,7 @@ public class StartMenu extends Application {
             outToServer.writeBytes(name + '\n');
             recieverThread.start();
 
+            App.setUsername(name);
             Gui gui = new Gui();
             gui.start(borderPane, scene);
         } catch (Exception e) {
