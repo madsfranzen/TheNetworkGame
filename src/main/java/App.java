@@ -1,6 +1,3 @@
-import java.io.DataOutputStream;
-import java.net.Socket;
-
 import javafx.application.Application;
 
 public class App {
