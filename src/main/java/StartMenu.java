@@ -227,7 +227,9 @@ public class StartMenu extends Application {
     }
 
     private void configureWindow(Stage primaryStage) {
-        if (screenBounds.getWidth() > 1920) {
+        System.out.println("Width: " + screenBounds.getWidth());
+        System.out.println("Height: " + screenBounds.getHeight());
+        if (screenBounds.getWidth() > 1920 || screenBounds.getHeight() > 1080) {
             primaryStage.setWidth(1920);
             primaryStage.setHeight(1080);
         } else {
