@@ -227,13 +227,18 @@ public class StartMenu extends Application {
     }
 
     private void configureWindow(Stage primaryStage) {
-        // Configure window to fill screen without decorations
-        primaryStage.initStyle(StageStyle.UNDECORATED);
-        primaryStage.setX(screenBounds.getMinX());
-        primaryStage.setY(screenBounds.getMinY());
-        primaryStage.setWidth(screenBounds.getWidth());
-        primaryStage.setHeight(screenBounds.getHeight());
-        primaryStage.setResizable(false);
+        if (screenBounds.getWidth() > 1920) {
+            primaryStage.setWidth(1920);
+            primaryStage.setHeight(1080);
+        } else {
+            // Configure window to fill screen without decorations
+            primaryStage.initStyle(StageStyle.UNDECORATED);
+            primaryStage.setX(screenBounds.getMinX());
+            primaryStage.setY(screenBounds.getMinY());
+            primaryStage.setWidth(screenBounds.getWidth());
+            primaryStage.setHeight(screenBounds.getHeight());
+            primaryStage.setResizable(false);
+        }
     }
 
     public static void goToMainMenu() {
