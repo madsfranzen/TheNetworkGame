@@ -173,14 +173,6 @@ public class GameRenderer extends ScrollPane {
         setFocusTraversable(false);
     }
 
-    // Update the camera pos
-    // TODO: PHILIP
-    public void updateCameraPosition(int x, int y) {
-        // plus or minus with player x,y
-        this.setHvalue(x / 31.0);
-        this.setVvalue(y / 31.0);
-    }
-
     public PlayerCanvas getPlayerCanvas0() {
         return playerCanvas0;
     }

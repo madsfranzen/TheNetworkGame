@@ -187,6 +187,7 @@ public class StartMenu extends Application {
     public static DataOutputStream outToServer = null;
     public static RecieverThread recieverThread;
     public static Socket clientSocket;
+    private boolean firstTime = true;
 
     private void connectAction() {
         // MAIN THREAD
@@ -206,8 +207,14 @@ public class StartMenu extends Application {
             recieverThread.start();
 
             App.setUsername(name);
-            Gui gui = new Gui();
-            gui.start(borderPane, scene);
+            if (firstTime) {
+                Gui gui = new Gui();
+                gui.start(borderPane, scene);
+                firstTime = false;
+            } else {
+                Gui.setDataOutputStream();
+                borderPane.setCenter(Gui.getStackPane());
+            }
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setHeaderText("Connecton failed!");

@@ -28,9 +28,11 @@ public class Gui {
     public static final ScoreBoard scoreBoard = new ScoreBoard(SCOREBOARD_WIDTH, SCOREBOARD_HEIGHT);
     private static DataOutputStream outToServer = null;
 
+    private static StackPane mainPane;
+
     public void start(BorderPane root, Scene scene) throws Exception {
         // Create a StackPane to overlay the ScoreBoard on top of GameRenderer
-        StackPane mainPane = new StackPane();
+        mainPane = new StackPane();
 
         // Add GameRenderer as the base layer
         mainPane.getChildren().add(gameRenderer);
@@ -132,6 +134,10 @@ public class Gui {
 
     public static GameRenderer getGameRenderer() {
         return gameRenderer;
+    }
+
+    public static StackPane getStackPane() {
+        return mainPane;
     }
 
 }

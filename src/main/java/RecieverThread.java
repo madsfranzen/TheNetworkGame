@@ -50,7 +50,7 @@ public class RecieverThread extends Thread {
                 setGUIloaded(true);
             }
             try {
-                Thread.sleep(100);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -61,7 +61,6 @@ public class RecieverThread extends Thread {
         try {
 
             String welcomeMessage = in.readLine();
-            System.out.println(welcomeMessage);
 
             while (running) {
                 messageFromServer = in.readLine();
@@ -71,6 +70,7 @@ public class RecieverThread extends Thread {
                     running = false;
                     StartMenu.clientSocket.close();
                     StartMenu.goToMainMenu();
+
                     break;
                 } else {
 
@@ -102,10 +102,7 @@ public class RecieverThread extends Thread {
                                     (player != null ? ", Player=" + player : ""));
 
                             if (player != null) {
-                                System.out.println("Player: " + player);
-                                System.out.println("Username: " + App.username);
                                 if (player.equals(App.username)) {
-                                    System.out.println("Username: " + App.username);
                                     smoothScroll(x, y);
                                 }
                                 if (zIndex == 0 && !contentType.equals("STAIRS")) {
@@ -148,8 +145,6 @@ public class RecieverThread extends Thread {
 
         double startH = gameRenderer.getHvalue();
         double startV = gameRenderer.getVvalue();
-
-        System.out.println("Hvalue property: " + gameRenderer.vvalueProperty().doubleValue());
 
         double endH = deltaX * stepSize;
         double endV = deltaY * stepSize;
