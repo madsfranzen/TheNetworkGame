@@ -150,8 +150,8 @@ public class RecieverThread extends Thread {
 
         System.out.println("Hvalue property: " + gameRenderer.vvalueProperty().doubleValue());
 
-        double endH = startH + (deltaX * stepSize);
-        double endV = startV + (deltaY * stepSize);
+        double endH = deltaX * stepSize;
+        double endV = deltaY * stepSize;
 
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(gameRenderer.hvalueProperty(), startH), new KeyValue(gameRenderer.vvalueProperty(), startV)),
