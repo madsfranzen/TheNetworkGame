@@ -12,12 +12,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundImage;
-import javafx.scene.layout.BackgroundPosition;
-import javafx.scene.layout.BackgroundRepeat;
-import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -27,10 +21,11 @@ import javafx.stage.StageStyle;
 
 public class StartMenu extends Application {
 
-    static BorderPane borderPane;
-    Scene scene;
-    Stage window;
+    private static BorderPane borderPane;
+    private Scene scene;
+    private static Stage window;
     private static GridPane pane;
+    private Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -42,12 +37,12 @@ public class StartMenu extends Application {
         borderPane.setCenter(pane);
 
         scene = new Scene(borderPane);
-
+        
         initContent(pane);
 
         setBackgroundImage();
 
-        toggleWindowedFullscreen(window);
+        configureWindow(window);
         window.setScene(scene);
         window.show();
         window.requestFocus();
@@ -57,7 +52,6 @@ public class StartMenu extends Application {
     private TextField txfNavn = new TextField();
     private TextField txfIp = new TextField();
     private TextField txfPort = new TextField();
-    private Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 
     private void initContent(GridPane pane) {
         pane.setVgap(10);
@@ -106,20 +100,74 @@ public class StartMenu extends Application {
     }
 
     private static void setBackgroundImage() {
-        Image backgroundImage = new Image("/assets/UI/Backgrounds/mainBG.png");
-
-        BackgroundImage backgroundImg = new BackgroundImage(
-                backgroundImage,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundPosition.CENTER,
-                new BackgroundSize(100, 100, true, true, true, false));
-
-        borderPane.setBackground(new Background(backgroundImg));
+        try {
+            // Load the image
+            String imagePath = "/assets/UI/Backgrounds/mainBG.png";
+            Image backgroundImage = new Image(imagePath, true);
+            
+            // Verify image loaded successfully
+            if (backgroundImage.isError()) {
+                System.err.println("Error loading background image: " + backgroundImage.getException());
+                return;
+            }
+            
+            // Calculate aspect ratios for adaptive stretching
+            double imageAspectRatio = backgroundImage.getWidth() / backgroundImage.getHeight();
+            Rectangle2D bounds = getScreenBounds();
+            double screenAspectRatio = bounds.getWidth() / bounds.getHeight();
+            
+            // Determine optimal stretch factors based on aspect ratios
+            double widthStretch = 120;  // Default stretch percentage
+            double heightStretch = 120; // Default stretch percentage
+            
+            // Adapt stretching based on aspect ratio comparison
+            if (imageAspectRatio > screenAspectRatio) {
+                heightStretch = 150; // More aggressive height stretch
+            } 
+            else if (imageAspectRatio < screenAspectRatio) {
+                widthStretch = 150; // More aggressive width stretch
+            }
+            
+            // Get image URL for CSS
+            String imageUrl = StartMenu.class.getResource(imagePath).toExternalForm();
+            
+            // CSS with optimized stretching
+            String css = String.format(
+                "-fx-background-image: url('%s'); " +
+                "-fx-background-size: %d%% %d%%; " +
+                "-fx-background-position: center center; " +
+                "-fx-background-repeat: no-repeat; " +
+                "-fx-padding: 0; " +
+                "-fx-background-insets: 0;",
+                imageUrl, (int)widthStretch, (int)heightStretch);
+            
+            // Apply the CSS to the BorderPane
+            borderPane.setStyle(css);
+            
+            // Make BorderPane larger than the screen to ensure full coverage
+            double extraSize = 50; // Add 50 pixels in each direction
+            borderPane.setPrefWidth(bounds.getWidth() + extraSize);
+            borderPane.setPrefHeight(bounds.getHeight() + extraSize);
+            borderPane.setMinWidth(bounds.getWidth() + extraSize);
+            borderPane.setMinHeight(bounds.getHeight() + extraSize);
+            
+            // Center the oversized BorderPane
+            borderPane.setLayoutX(-extraSize/2);
+            borderPane.setLayoutY(-extraSize/2);
+            
+            // Set black Scene background as fallback
+            if (window != null && window.getScene() != null) {
+                window.getScene().setFill(javafx.scene.paint.Color.BLACK);
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Failed to set background image: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void addSceneEventListener() {
-        scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+        scene.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
             if (borderPane.getCenter() == pane) {
                 switch (event.getCode()) {
                     case ESCAPE:
@@ -171,19 +219,33 @@ public class StartMenu extends Application {
         }
     }
 
-    private void toggleWindowedFullscreen(Stage primaryStage) {
+    private void configureWindow(Stage primaryStage) {
+        // Configure window to fill screen without decorations
+        primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.setX(screenBounds.getMinX());
         primaryStage.setY(screenBounds.getMinY());
         primaryStage.setWidth(screenBounds.getWidth());
         primaryStage.setHeight(screenBounds.getHeight());
-        primaryStage.setFullScreen(false);
-        primaryStage.initStyle(StageStyle.UNDECORATED);
+        primaryStage.setResizable(false);
     }
 
     public static void goToMainMenu() {
         Platform.runLater(() -> {
-            borderPane.setCenter(pane);
-            setBackgroundImage();
+            try {
+                // Set the pane back as the center content
+                borderPane.setCenter(pane);
+                
+                // Re-apply the background image
+                setBackgroundImage();
+            } catch (Exception e) {
+                System.err.println("Error returning to main menu: " + e.getMessage());
+                e.printStackTrace();
+            }
         });
+    }
+
+    // Static method to get screen bounds from anywhere
+    private static Rectangle2D getScreenBounds() {
+        return Screen.getPrimary().getVisualBounds();
     }
 }

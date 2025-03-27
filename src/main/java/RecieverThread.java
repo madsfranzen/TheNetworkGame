@@ -5,12 +5,13 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 public class RecieverThread extends Thread {
     private BufferedReader in;
@@ -104,7 +105,7 @@ public class RecieverThread extends Thread {
                                 System.out.println("Player: " + player);
                                 System.out.println("Username: " + App.username);
                                 if (player.equals(App.username)) {
-                                    System.out.println("Username");
+                                    System.out.println("Username: " + App.username);
                                     smoothScroll(x, y);
                                 }
                                 if (zIndex == 0 && !contentType.equals("STAIRS")) {
